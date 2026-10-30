@@ -1,6 +1,31 @@
 # Changelog
 
-## V6.0.0 — 2026-10-29 · `index.html` (main site)
+## V6.1.0 — 2026-10-29 · `index.html` (main site)
+More colorful Evaluar screen, based on the owner's reference design. **The original JavaScript is still unchanged, byte for byte.**
+
+### Look
+- Cream background with letters and shapes, only in the margins.
+- Top bar: colored icons on each tab, the month selector with a colored border, and a logo with a wand.
+- Students panel: rainbow border.
+- **Gauge** showing how many students have done the selected assessment (e.g. 13/14).
+
+### Fields
+- Micro-icons in the fields: ABC (area), globe (language), Aa (type), clock (time), bolt (counting speed).
+- «Reevaluar» is a switch.
+- The selected student's initials appear next to «Comenzar evaluación», which uses a cyan→indigo→purple gradient.
+
+### Student cards
+- Solid **green** for evaluated and **coral with a dashed border** for pending.
+- The **selected** student uses the same gradient as «Comenzar evaluación», is slightly enlarged, and has a yellow ring.
+- **Monthly progress ring** around each student's initials: one segment per assessment applied that month to the class.
+  - 100 % = every assessment (area + language + type) applied that month to at least one active student.
+  - Calculated from data already loaded; nothing is written to Supabase.
+
+### Testing
+- Regression: 104/104 identical results vs V5.9.35, no errors.
+- Ring checks (`tests/test_ring.js`): October, September, an empty month, and recalculation after saving a new assessment.
+
+## V6.0.0 — 2026-10-29 · previous main site
 Visual redesign and reorganization. **The original JavaScript (assessments, saving, reports, Supabase) is unchanged, byte for byte.**
 
 ### Layout

@@ -695,7 +695,7 @@ button{border:0;border-radius:13px;padding:13px 18px;font-size:16px;font-weight:
 
 </style>
 
-<!-- V6.0.0: rediseño visual y nueva organización (Evaluar · Reportes · Mi clase · Configuración). La lógica y Supabase no cambian. -->
+<!-- V6.1.0: pantalla Evaluar más colorida, anillo de avance mensual por estudiante y medidor de evaluados. La lógica y Supabase no cambian. -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* =====================================================================
@@ -998,6 +998,109 @@ body.in-test{background:#fff}
   #reports .eyebrow,#reports .results-panel>.panel-title{display:none!important}
 }
 
+/* =====================================================================
+   V6.1.0 — Pantalla principal más colorida (sobre la capa V6.0.0)
+   ===================================================================== */
+@media screen{
+:root{--cream:#FFF8EE;--emerald:#047857;--emerald-2:#0B9A6B;--coral-a:#FF8A73;--coral-b:#E8573F;
+  --cta:linear-gradient(90deg,#06B6D4,#5B50F6 55%,#8B5CF6);--rainbow:linear-gradient(135deg,#8B5CF6,#EC4899 35%,#F59E0B 65%,#10B981)}
+body{background:var(--cream)}
+#appView{position:relative}
+.confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.24}
+#appView>.shell,#appView>main{position:relative;z-index:1}
+#appView>.shell{position:sticky;z-index:50}
+body.in-test .confetti{display:none}
+
+/* barra superior */
+.shell{background:#fff;box-shadow:0 2px 18px rgba(30,27,75,.07);border-bottom:0}
+.shell-name{font-family:var(--font);font-weight:800}
+.wand{width:26px;height:26px;margin-left:-4px}
+.shell-nav{background:transparent;border:0;padding:0;gap:4px}
+.navtab{color:#334155;font-weight:600}
+.navtab[aria-current="page"]{background:#EEF0FF;color:#3F35D9;box-shadow:none;font-weight:700}
+.ic-c{width:22px;height:22px;flex:0 0 auto}
+.month-chip{border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(90deg,#8B5CF6,#EC4899,#F59E0B) border-box;border-radius:14px}
+.month-chip label{color:#5B50F6}
+.month-chip select{font-weight:800;text-transform:uppercase;letter-spacing:.02em}
+.icon-btn{border:0;box-shadow:none;background:transparent}
+
+/* encabezado de la página */
+.page-head{align-items:flex-end}
+.legend-top{display:flex;gap:18px;flex-wrap:wrap;font-weight:600;font-size:14.5px;color:#334155;padding-bottom:6px}
+.legend-top .lg{display:inline-flex;align-items:center;gap:7px}
+.legend-top .lg-pending::before{background:var(--coral-b)}
+.legend-top .lg-done::before{background:var(--emerald)}
+.legend-top .lg-ring::before{content:none}
+
+/* panel 1: campos con micro-iconos */
+.panel{box-shadow:0 10px 30px rgba(30,27,75,.08);border-color:#F1EEF8}
+.sel-wrap{position:relative}
+.sel-wrap select{padding-left:54px}
+.fi{position:absolute;left:10px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:32px;height:32px;border-radius:9px;font:800 12px var(--font);pointer-events:none;z-index:1}
+.fi svg{width:18px;height:18px}
+.fi-abc{background:#FEF3C7;color:#B45309}
+.fi-globe{background:#DBEAFE}
+.fi-aa{background:#FCE7F3;color:#BE185D;font-size:14px}
+.fi-clock{background:#D1FAE5}
+.fi-speed{background:#FEF3C7}
+/* interruptor para «Reevaluar» */
+#retry{appearance:none;-webkit-appearance:none;width:48px;height:28px;border-radius:99px;background:#CBD5E1;position:relative;cursor:pointer;flex:0 0 auto;transition:background .2s;margin:0}
+#retry::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
+#retry:checked{background:linear-gradient(90deg,#10B981,#5B50F6)}
+#retry:checked::after{left:23px}
+.chosen{display:flex;align-items:center;gap:9px}
+.chosen-av{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#EEF0FF;color:#3F35D9;font-weight:800;font-size:14px}
+.chosen-av:empty{display:none}
+.primary#start{background:var(--cta);box-shadow:0 10px 24px rgba(91,80,246,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.primary#start:hover{filter:brightness(1.07);box-shadow:0 12px 30px rgba(91,80,246,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+
+/* panel 2: borde de color, medidor y tarjetas */
+.panel.rainbow{border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,var(--rainbow) border-box}
+.month-row{display:flex;align-items:center;gap:18px;margin:-4px 0 18px}
+.month-row .monthhead{flex:1;margin:0;background:#F4F3FF;border-color:#E6E3FF}
+.gauge{position:relative;width:150px;flex:0 0 auto}
+.gauge svg{display:block;width:150px;height:92px}
+#llGaugeArc{transition:stroke-dasharray .5s ease}
+.gauge-num{position:absolute;left:0;right:0;bottom:2px;text-align:center;line-height:1.1}
+.gauge-num b{display:block;font-size:26px;font-weight:800;color:#1E1B4B}
+.gauge-num span{font-size:12px;font-weight:600;color:#475569}
+.studentgrid{grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:18px 16px;padding-top:6px}
+.studentbtn{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;align-items:center;column-gap:10px;min-height:76px;padding:10px 12px 10px 16px;border:0;border-radius:16px;color:#fff;font-size:16.5px;text-shadow:none;
+  background:linear-gradient(180deg,var(--coral-a),var(--coral-b));box-shadow:0 6px 14px rgba(232,87,63,.25);outline:2px dashed rgba(255,255,255,.75);outline-offset:-6px;transition:transform .15s,box-shadow .15s}
+.studentbtn:hover{border:0;transform:translateY(-2px);box-shadow:0 10px 20px rgba(232,87,63,.30)}
+.studentbtn .statusline{grid-column:1;color:#FFF1EC;margin-top:3px}
+.studentbtn .statusline::before{background:#FFE0D6}
+.studentbtn.done{background:linear-gradient(180deg,var(--emerald-2),var(--emerald));outline:0;box-shadow:0 6px 14px rgba(4,120,87,.22)}
+.studentbtn.done:hover{box-shadow:0 10px 20px rgba(4,120,87,.30)}
+.studentbtn.done .statusline{color:#ECFDF5}
+.studentbtn.done .statusline::before{background:#A7F3D0}
+.studentbtn.done::after{content:none!important;display:none!important}
+.studentbtn.selected,.studentbtn.selected.done{background:var(--cta);outline:0;transform:scale(1.05);z-index:2;
+  box-shadow:0 0 0 4px #FBBF24,0 0 0 8px #fff,0 18px 36px rgba(79,70,229,.45)}
+.studentbtn.selected .statusline{color:#fff}
+/* anillo de avance del mes */
+.ll-ring{grid-column:2;grid-row:1 / span 2;position:relative;width:54px;height:54px;display:block}
+.ll-ring svg{position:absolute;inset:0;width:54px;height:54px}
+.ll-ring .ll-av{position:absolute;inset:8px;display:grid;place-items:center;border-radius:50%;background:#fff;color:var(--emerald);font-weight:800;font-size:13.5px;line-height:1}
+.studentbtn:not(.done) .ll-av{color:#C2410C}
+.studentbtn.selected .ll-av{color:#4F46E5}
+.tip{background:#FFFBEB;border-color:#FDE68A;color:#475569;align-items:center}
+.tip b{color:#1E1B4B}
+
+@media (max-width:900px){.month-row{flex-wrap:wrap}.legend-top{padding-bottom:0}}
+@media (max-width:640px){.gauge{margin:0 auto}.studentgrid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}
+}
+@media print{.confetti{display:none!important}}
+@media screen{
+.navtab{white-space:nowrap;padding:9px 12px}
+.shell-inner{gap:12px}
+.studentbtn .statusline{white-space:nowrap;font-size:12.5px}
+.studentbtn{font-size:16px}
+}
+@media screen and (min-width:1101px) and (max-width:1300px){
+.shell-name{font-size:19px}.navtab{padding:9px 10px;font-size:14.5px}.month-chip select{padding-right:30px}
+}
+
 </style>
 </head>
 <body>
@@ -1035,26 +1138,27 @@ body.in-test{background:#fff}
     <label for="loginPassword">Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••">
     <div id="loginError"></div>
     <button id="loginBtn" class="primary" type="button">Iniciar sesión</button>
-    <div class="login-foot">Developed by Geovanny Cobos · V6.0.0</div>
+    <div class="login-foot">Developed by Geovanny Cobos · V6.1.0</div>
   </section>
 </div>
 
 <div id="appView" style="display:none">
+<svg class="confetti" viewBox="0 0 1600 1100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g font-family="Fredoka, 'Plus Jakarta Sans', sans-serif" font-weight="700"><circle cx="1110" cy="46" r="11" fill="#10B981"/><text x="1331" y="69" font-size="32" fill="#EC4899" transform="rotate(6 1331 69)">b</text><text x="471" y="5" font-size="28" fill="#10B981" transform="rotate(-6 471 5)">c</text><circle cx="821" cy="33" r="8" fill="#10B981"/><text x="1356" y="1" font-size="26" fill="#8B5CF6" transform="rotate(29 1356 1)">g</text><rect x="1543" y="834" width="15" height="15" rx="4" fill="#EC4899" transform="rotate(-24 1543 834)"/><text x="432" y="1068" font-size="21" fill="#8B5CF6" transform="rotate(-6 432 1068)">7</text><text x="1583" y="235" font-size="30" fill="#8B5CF6" transform="rotate(-10 1583 235)">ñ</text><text x="725" y="1055" font-size="20" fill="#06B6D4" transform="rotate(-7 725 1055)">Z</text><text x="126" y="52" font-size="26" fill="#8B5CF6" transform="rotate(-15 126 52)">D</text><circle cx="1563" cy="139" r="11" fill="#06B6D4"/><text x="27" y="296" font-size="19" fill="#EC4899" transform="rotate(-19 27 296)">a</text><text x="1569" y="723" font-size="33" fill="#06B6D4" transform="rotate(5 1569 723)">q</text><circle cx="499" cy="37" r="7" fill="#10B981"/><text x="1589" y="968" font-size="33" fill="#10B981" transform="rotate(12 1589 968)">3</text><text x="36" y="1053" font-size="30" fill="#10B981" transform="rotate(10 36 1053)">D</text><text x="1433" y="45" font-size="31" fill="#F59E0B" transform="rotate(-23 1433 45)">c</text><text x="1574" y="127" font-size="27" fill="#5B50F6" transform="rotate(8 1574 127)">D</text><text x="856" y="40" font-size="30" fill="#F59E0B" transform="rotate(2 856 40)">H</text><text x="801" y="1096" font-size="32" fill="#10B981" transform="rotate(12 801 1096)">F</text><polygon points="11,592 23,618 -2,618" fill="#F59E0B"/><rect x="1563" y="1025" width="22" height="22" rx="4" fill="#5B50F6" transform="rotate(-9 1563 1025)"/><text x="686" y="39" font-size="29" fill="#F59E0B" transform="rotate(25 686 39)">R</text><text x="1600" y="991" font-size="29" fill="#5B50F6" transform="rotate(27 1600 991)">q</text><rect x="1550" y="577" width="17" height="17" rx="4" fill="#EC4899" transform="rotate(-23 1550 577)"/><circle cx="44" cy="1066" r="10" fill="#10B981"/><text x="1531" y="1016" font-size="26" fill="#EC4899" transform="rotate(-22 1531 1016)">ñ</text><text x="1247" y="25" font-size="22" fill="#EC4899" transform="rotate(11 1247 25)">g</text><rect x="349" y="1098" width="23" height="23" rx="4" fill="#EC4899" transform="rotate(-22 349 1098)"/><text x="1096" y="20" font-size="29" fill="#06B6D4" transform="rotate(25 1096 20)">g</text><circle cx="60" cy="607" r="10" fill="#06B6D4"/><text x="1344" y="1089" font-size="19" fill="#06B6D4" transform="rotate(27 1344 1089)">D</text><text x="21" y="771" font-size="25" fill="#EC4899" transform="rotate(-8 21 771)">g</text><text x="1585" y="993" font-size="22" fill="#EC4899" transform="rotate(28 1585 993)">b</text><text x="1037" y="12" font-size="22" fill="#F59E0B" transform="rotate(-10 1037 12)">ñ</text><text x="1529" y="425" font-size="26" fill="#10B981" transform="rotate(-20 1529 425)">F</text><text x="978" y="64" font-size="23" fill="#10B981" transform="rotate(-6 978 64)">Z</text><text x="43" y="850" font-size="21" fill="#5B50F6" transform="rotate(15 43 850)">b</text><text x="80" y="1088" font-size="31" fill="#8B5CF6" transform="rotate(-17 80 1088)">3</text><text x="73" y="108" font-size="34" fill="#EC4899" transform="rotate(19 73 108)">a</text><text x="849" y="1097" font-size="20" fill="#5B50F6" transform="rotate(-1 849 1097)">7</text><text x="1523" y="552" font-size="19" fill="#5B50F6" transform="rotate(-26 1523 552)">g</text><text x="1583" y="358" font-size="31" fill="#5B50F6" transform="rotate(-19 1583 358)">R</text><text x="1318" y="10" font-size="33" fill="#EC4899" transform="rotate(6 1318 10)">7</text><text x="848" y="1092" font-size="22" fill="#F59E0B" transform="rotate(28 848 1092)">a</text><text x="1326" y="27" font-size="24" fill="#06B6D4" transform="rotate(-18 1326 27)">9</text><text x="36" y="567" font-size="27" fill="#EC4899" transform="rotate(28 36 567)">R</text><text x="1549" y="740" font-size="27" fill="#10B981" transform="rotate(13 1549 740)">Z</text><text x="1532" y="704" font-size="29" fill="#F59E0B" transform="rotate(18 1532 704)">q</text><text x="1186" y="1090" font-size="21" fill="#5B50F6" transform="rotate(-18 1186 1090)">9</text><text x="467" y="1067" font-size="23" fill="#10B981" transform="rotate(-23 467 1067)">b</text><text x="58" y="120" font-size="21" fill="#F59E0B" transform="rotate(-16 58 120)">F</text><rect x="876" y="1053" width="17" height="17" rx="4" fill="#EC4899" transform="rotate(-17 876 1053)"/><rect x="1562" y="874" width="20" height="20" rx="4" fill="#8B5CF6" transform="rotate(-16 1562 874)"/><polygon points="30,197 40,216 21,216" fill="#5B50F6"/><text x="1515" y="1060" font-size="24" fill="#F59E0B" transform="rotate(3 1515 1060)">3</text><text x="1527" y="830" font-size="19" fill="#5B50F6" transform="rotate(-19 1527 830)">R</text><circle cx="309" cy="40" r="11" fill="#06B6D4"/><text x="392" y="1084" font-size="22" fill="#8B5CF6" transform="rotate(-19 392 1084)">q</text><circle cx="1597" cy="778" r="13" fill="#06B6D4"/><text x="874" y="70" font-size="33" fill="#EC4899" transform="rotate(30 874 70)">ñ</text><text x="122" y="35" font-size="20" fill="#5B50F6" transform="rotate(15 122 35)">F</text><circle cx="53" cy="581" r="9" fill="#06B6D4"/><text x="1027" y="42" font-size="33" fill="#10B981" transform="rotate(6 1027 42)">e</text><text x="1591" y="922" font-size="20" fill="#10B981" transform="rotate(-23 1591 922)">Ñ</text><text x="673" y="27" font-size="30" fill="#F59E0B" transform="rotate(24 673 27)">b</text><text x="635" y="57" font-size="33" fill="#06B6D4" transform="rotate(3 635 57)">D</text><text x="1599" y="804" font-size="25" fill="#06B6D4" transform="rotate(18 1599 804)">4</text><text x="860" y="1046" font-size="22" fill="#F59E0B" transform="rotate(-12 860 1046)">A</text><text x="73" y="34" font-size="23" fill="#F59E0B" transform="rotate(-21 73 34)">3</text><text x="1108" y="65" font-size="32" fill="#F59E0B" transform="rotate(-29 1108 65)">3</text><text x="1519" y="1074" font-size="30" fill="#F59E0B" transform="rotate(-11 1519 1074)">D</text><text x="1573" y="484" font-size="26" fill="#8B5CF6" transform="rotate(-27 1573 484)">q</text><text x="1435" y="1087" font-size="25" fill="#06B6D4" transform="rotate(15 1435 1087)">b</text><text x="833" y="1047" font-size="30" fill="#06B6D4" transform="rotate(-20 833 1047)">F</text><text x="57" y="657" font-size="25" fill="#06B6D4" transform="rotate(23 57 657)">b</text><text x="49" y="126" font-size="28" fill="#06B6D4" transform="rotate(5 49 126)">F</text><text x="997" y="59" font-size="29" fill="#8B5CF6" transform="rotate(19 997 59)">Ñ</text></g></svg>
   <header id="appShellBar" class="shell no-print">
     <div class="shell-inner">
       <div class="shell-brand">
         <span class="logo-mark"><svg viewBox="0 0 48 48"><rect width="48" height="48" rx="14" fill="url(#llGrad)"/><path d="M17 13v20h14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33" cy="15" r="4" fill="#F6B11E"/></svg></span>
-        <span class="shell-name">Little Learners <span class="brand-sparkle">✨</span></span>
+        <span class="shell-name">Little Learners</span><svg class="wand" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 14 10" stroke="#8B5CF6" stroke-width="2.6" stroke-linecap="round"/><path d="M16 3l1 2.4 2.4 1-2.4 1L16 9.8l-1-2.4-2.4-1 2.4-1z" fill="#F59E0B"/><circle cx="20.5" cy="11.5" r="1.4" fill="#EC4899"/><circle cx="11" cy="4.5" r="1.2" fill="#10B981"/></svg>
       </div>
       <nav id="appNav" class="shell-nav" aria-label="Secciones">
-        <button type="button" class="navtab" id="navEvaluate"><svg class="ic"><use href="#i-eval"/></svg><span>Evaluar</span></button>
-        <button type="button" class="navtab" id="reportsBtn"><svg class="ic"><use href="#i-chart"/></svg><span>Reportes</span></button>
-        <button type="button" class="navtab" id="classBtn"><svg class="ic"><use href="#i-users"/></svg><span>Mi clase</span></button>
-        <button type="button" class="navtab" id="settingsBtn"><svg class="ic"><use href="#i-gear"/></svg><span>Configuración</span></button>
+        <button type="button" class="navtab" id="navEvaluate"><svg class="ic-c" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="#5B50F6"/><path d="m8 12.5 2.6 2.6L16 9.5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Evaluar</span></button>
+        <button type="button" class="navtab" id="reportsBtn"><svg class="ic-c" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="12" width="4.5" height="9" rx="1.5" fill="#F59E0B"/><rect x="9.8" y="7" width="4.5" height="14" rx="1.5" fill="#10B981"/><rect x="16.5" y="3" width="4.5" height="18" rx="1.5" fill="#EC4899"/></svg><span>Reportes</span></button>
+        <button type="button" class="navtab" id="classBtn"><svg class="ic-c" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="#10B981"/><rect x="4.5" y="6.5" width="15" height="8" rx="1.2" fill="#047857"/><rect x="5" y="17" width="3" height="4" rx="1" fill="#F59E0B"/><rect x="16" y="17" width="3" height="4" rx="1" fill="#F59E0B"/><path d="M7 12h3M12 10h5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg><span>Mi clase</span></button>
+        <button type="button" class="navtab" id="settingsBtn"><svg class="ic-c" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2 2.4 3.1-.6.6 3.1 2.4 2-1.5 2.6 1.5 2.6-2.4 2-.6 3.1-3.1-.6-2 2.4-2-2.4-3.1.6-.6-3.1-2.4-2 1.5-2.6L3.8 9.4l2.4-2 .6-3.1 3.1.6z" fill="#8B5CF6"/><circle cx="12" cy="12" r="3.6" fill="#FBBF24"/></svg><span>Configuración</span></button>
       </nav>
       <div class="shell-tools">
         <div class="field month-chip" title="Mes de trabajo: se usa para evaluar y para los reportes">
-          <label for="assessmentMonth"><svg class="ic"><use href="#i-cal"/></svg><span>Mes</span></label>
+          <label for="assessmentMonth"><svg class="ic-c" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#8B5CF6"/><rect x="3" y="4.5" width="18" height="5" rx="2" fill="#EC4899"/><rect x="6" y="12" width="3" height="2.6" rx=".6" fill="#fff"/><rect x="10.5" y="12" width="3" height="2.6" rx=".6" fill="#fff"/><rect x="15" y="12" width="3" height="2.6" rx=".6" fill="#fff"/><rect x="6" y="16" width="3" height="2.6" rx=".6" fill="#fff"/></svg><span>Mes</span></label>
           <select id="assessmentMonth">
 <option value="2026-08">Agosto 2026</option><option value="2026-09">Septiembre 2026</option>
 <option value="2026-10" selected>Octubre 2026</option><option value="2026-11">Noviembre 2026</option>
@@ -1075,39 +1179,48 @@ body.in-test{background:#fff}
         <h1 id="setupTitle">Evaluación de Letras</h1>
         <div class="sub" id="setupSubtitle">Evaluación mensual — 27 letras del alfabeto español</div>
       </div>
+      <div class="legend-top" aria-label="Leyenda"><span class="lg lg-pending">Pendiente</span><span class="lg lg-done">Evaluado</span><span class="lg lg-ring"><svg width="20" height="20" viewBox="0 0 54 54" aria-hidden="true"><defs><linearGradient id="llRingLegend" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FDE047"/><stop offset=".5" stop-color="#FB923C"/><stop offset="1" stop-color="#F472B6"/></linearGradient></defs><circle cx="27" cy="27" r="22" fill="none" stroke="#E2E8F0" stroke-width="8"/><circle cx="27" cy="27" r="22" fill="none" stroke="url(#llRingLegend)" stroke-width="8" stroke-dasharray="104 200" transform="rotate(-90 27 27)"/></svg>Avance del mes</span></div>
     </div>
     <div class="eval-layout">
       <div class="panel eval-config">
         <div class="panel-title"><span class="step">1</span>¿Qué vas a evaluar?</div>
         <div class="row">
-          <div class="field"><label for="area">Área</label><select id="area"><optgroup label="Literatura y lenguaje"><option value="letters">Letras</option><option value="syllables">Sílabas</option><option value="rhymes">Rimas</option><option value="alliteration">Aliteración</option><option value="sentences">Repetición de frases</option></optgroup><optgroup label="Matemáticas"><option value="numbers">Números</option><option value="counting">Conteo</option><option value="shapes">Figuras</option><option value="colors">Colores</option><option value="patterns">Patrones</option></optgroup></select></div>
-          <div class="field" id="languageField"><label for="language">Idioma</label><select id="language"><option value="es">Español</option><option value="en">English</option></select></div>
-          <div class="field" id="caseField"><label for="case">Tipo</label><select id="case"><option value="upper">Mayúsculas</option><option value="lower">Minúsculas</option><option value="sound">Sonidos</option></select></div>
+          <div class="field"><label for="area">Área</label><div class="sel-wrap"><span class="fi fi-abc" aria-hidden="true">ABC</span><select id="area"><optgroup label="Literatura y lenguaje"><option value="letters">Letras</option><option value="syllables">Sílabas</option><option value="rhymes">Rimas</option><option value="alliteration">Aliteración</option><option value="sentences">Repetición de frases</option></optgroup><optgroup label="Matemáticas"><option value="numbers">Números</option><option value="counting">Conteo</option><option value="shapes">Figuras</option><option value="colors">Colores</option><option value="patterns">Patrones</option></optgroup></select></div></div>
+          <div class="field" id="languageField"><label for="language">Idioma</label><div class="sel-wrap"><span class="fi fi-globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></span><select id="language"><option value="es">Español</option><option value="en">English</option></select></div></div>
+          <div class="field" id="caseField"><label for="case">Tipo</label><div class="sel-wrap"><span class="fi fi-aa" aria-hidden="true">Aa</span><select id="case"><option value="upper">Mayúsculas</option><option value="lower">Minúsculas</option><option value="sound">Sonidos</option></select></div></div>
         </div>
         <div class="field" id="responseTimeField"><label for="responseSeconds">Tiempo para responder</label>
-<select id="responseSeconds">
+<div class="sel-wrap"><span class="fi fi-clock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></span><select id="responseSeconds">
 <option value="3">3 segundos</option>
 <option value="4" selected>4 segundos</option>
 <option value="5">5 segundos</option>
 <option value="6">6 segundos</option>
-</select></div>
-<div class="field" id="speedField"><label for="countSpeed">Velocidad del conteo</label><select id="countSpeed">
+</select></div></div>
+<div class="field" id="speedField"><label for="countSpeed">Velocidad del conteo</label><div class="sel-wrap"><span class="fi fi-speed" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#F59E0B"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><select id="countSpeed">
 <option value="slow">Lenta</option><option value="normal" selected>Normal</option><option value="fast">Rápida</option>
-</select></div>
+</select></div></div>
 <label class="check" id="retryField"><input id="retry" type="checkbox"> <span id="retryText">Reevaluar letras incorrectas al final</span></label>
         <div class="start-box">
-          <div class="start-summary"><span class="muted-label">Estudiante</span><strong id="startSummary">—</strong></div>
+          <div class="start-summary"><span class="muted-label">Estudiante</span><span class="chosen"><span class="chosen-av" id="startAvatar" aria-hidden="true"></span><strong id="startSummary">—</strong></span></div>
           <button class="primary btn-lg" id="start"><svg class="ic"><use href="#i-play"/></svg>Comenzar evaluación</button>
         </div>
       </div>
-      <div class="panel eval-students">
+      <div class="panel eval-students rainbow">
         <div class="panel-title"><span class="step">2</span>¿A quién vas a evaluar?</div>
-        <div class="monthhead">
-          <div><div class="monthtitle" id="monthTitle">Octubre 2026</div><div class="count" id="monthCount">0 de 5 estudiantes evaluados</div></div>
-          <div class="legend"><span class="lg lg-pending">Pendiente</span><span class="lg lg-done">Evaluado</span></div>
+        <div class="month-row">
+          <div class="monthhead">
+            <div><div class="monthtitle" id="monthTitle">Octubre 2026</div><div class="count" id="monthCount">0 de 5 estudiantes evaluados</div></div>
+          </div>
+          <div class="gauge" id="llGauge" role="img" aria-label="Estudiantes evaluados">
+            <svg viewBox="0 0 150 92" aria-hidden="true"><defs><linearGradient id="llGaugeGrad" x1="0" x2="1"><stop offset="0" stop-color="#5B50F6"/><stop offset=".55" stop-color="#8B5CF6"/><stop offset="1" stop-color="#EC4899"/></linearGradient></defs>
+              <path d="M15 80a60 60 0 0 1 120 0" fill="none" stroke="#EEF0F6" stroke-width="16" stroke-linecap="round"/>
+              <path id="llGaugeArc" d="M15 80a60 60 0 0 1 120 0" fill="none" stroke="url(#llGaugeGrad)" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"/>
+            </svg>
+            <div class="gauge-num"><b id="llGaugeNum">0/0</b><span>evaluados</span></div>
+          </div>
         </div>
         <div id="studentGrid" class="studentgrid"></div>
-        <div class="tip"><svg class="ic"><use href="#i-touch"/></svg><span>Para ver o eliminar una evaluación ya guardada, <b>mantén presionado</b> el nombre del estudiante (clic derecho en computadora).</span></div>
+        <div class="tip"><svg class="ic-c" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4" stroke="#B45309" stroke-width="2" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" fill="#FBBF24"/></svg><span><b>Consejo:</b> para ver o eliminar una evaluación ya guardada, <b>mantén presionado</b> el nombre del estudiante (clic derecho en computadora).</span></div>
       </div>
     </div>
   </section>
@@ -1183,7 +1296,7 @@ body.in-test{background:#fff}
   </div>
   <div class="settings-section panel about-panel">
     <h2>Acerca de</h2>
-    <p>Little Learners · Early Learning Assessment System · <b>V6.0.0</b><br>Developed by Geovanny Cobos</p>
+    <p>Little Learners · Early Learning Assessment System · <b>V6.1.0</b><br>Developed by Geovanny Cobos</p>
   </div>
 
   <button class="secondary legacy-back" id="backSettingsBtn" type="button" style="margin-top:20px">← Volver a evaluación</button>
@@ -1283,7 +1396,7 @@ body.in-test{background:#fff}
       <button class="secondary" id="repeat">Evaluar nuevamente</button>
     </div>
   </section>
-  <footer class="app-foot no-print">Little Learners · V6.0.0 · Developed by Geovanny Cobos</footer>
+  <footer class="app-foot no-print">Little Learners · V6.1.0 · Developed by Geovanny Cobos</footer>
   </main>
 </div>
 
@@ -3391,6 +3504,65 @@ $('backClassBtn').addEventListener('click', () => {
     try{sessionStorage.removeItem('webPreKSession')}catch(err){}
     location.reload();
   });
+})();
+
+/* V6.1.0 — Anillo de avance del mes en cada tarjeta, medidor de evaluados y avatar del estudiante elegido.
+   Solo lee los datos que la aplicación ya cargó (DATA_BY_MONTH); no escribe en Supabase. */
+(function(){
+  const el=id=>document.getElementById(id);
+  const grid=el('studentGrid');
+  const initials=n=>{const p=String(n).trim().split(/\s+/);return (p.length>1?p[0][0]+p[1][0]:p[0].slice(0,2)).toUpperCase()};
+  const nameOf=b=>b.childNodes[0]?b.childNodes[0].textContent.trim():'';
+
+  // 100 % = evaluaciones (área + idioma + tipo) aplicadas ese mes a al menos un estudiante activo.
+  function monthProgress(){
+    const month=el('assessmentMonth').value;
+    let md=null;try{md=(typeof DATA_BY_MONTH!=='undefined')?DATA_BY_MONTH[month]:null}catch(e){}
+    let active=[];try{active=Array.isArray(STUDENTS)?STUDENTS:[]}catch(e){}
+    const activeSet=new Set(active);const applied=[];
+    if(md){for(const area of Object.keys(md)){const byLang=md[area]||{};
+      for(const lang of Object.keys(byLang)){const done=(byLang[lang]&&byLang[lang].done)||{};
+        for(const type of Object.keys(done)){const set=done[type];
+          if(set&&typeof set.has==='function'&&[...set].some(n=>activeSet.has(n)))applied.push(set);}}}}
+    return {total:applied.length,count:name=>applied.filter(s=>s.has(name)).length};
+  }
+  function ringSvg(done,total,k){
+    const R=23,C=2*Math.PI*R,n=Math.max(total,1),seg=C/n,gap=total>1?Math.min(5,seg*.3):0;
+    let s=`<svg viewBox="0 0 54 54" aria-hidden="true"><defs><linearGradient id="llrg${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FDE047"/><stop offset=".5" stop-color="#FB923C"/><stop offset="1" stop-color="#F472B6"/></linearGradient></defs>`;
+    for(let i=0;i<n;i++){const on=total>0&&i<done;
+      s+=`<circle cx="27" cy="27" r="${R}" fill="none" stroke="${on?`url(#llrg${k})`:'rgba(255,255,255,.92)'}" stroke-width="5" stroke-linecap="${total>1?'round':'butt'}" stroke-dasharray="${(seg-gap).toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-(i*seg)).toFixed(2)}" transform="rotate(-90 27 27)"/>`;}
+    return s+'</svg>';
+  }
+  let busy=false;
+  function decorate(){
+    if(busy)return;busy=true;
+    try{
+      const p=monthProgress();
+      const btns=[...grid.querySelectorAll('.studentbtn')];
+      btns.forEach((b,k)=>{
+        const name=nameOf(b);const done=p.count(name);
+        const key=done+'/'+p.total;
+        let r=b.querySelector('.ll-ring');
+        if(r&&r.dataset.key===key)return;
+        if(!r){r=document.createElement('span');r.className='ll-ring';b.appendChild(r)}
+        r.dataset.key=key;
+        r.title=`Avance del mes: ${done} de ${p.total} evaluaciones`;
+        r.innerHTML=ringSvg(done,p.total,k)+`<span class="ll-av">${initials(name).replace(/[<>&]/g,'')}</span>`;
+        b.setAttribute('aria-label',`${name}, ${b.classList.contains('done')?'evaluado':'pendiente'}; avance del mes ${done} de ${p.total}`);
+      });
+      // medidor: estudiantes con la evaluación seleccionada ya hecha
+      const doneN=btns.filter(b=>b.classList.contains('done')).length,tot=btns.length;
+      el('llGaugeNum').textContent=doneN+'/'+tot;
+      el('llGaugeArc').setAttribute('stroke-dasharray',(tot?doneN/tot*100:0).toFixed(1)+' 100');
+      el('llGauge').setAttribute('aria-label',`${doneN} de ${tot} estudiantes evaluados`);
+      // avatar del estudiante elegido
+      const sel=grid.querySelector('.studentbtn.selected');
+      el('startAvatar').textContent=sel?initials(nameOf(sel)):'';
+    }finally{busy=false}
+  }
+  new MutationObserver(decorate).observe(grid,{childList:true});
+  el('assessmentMonth').addEventListener('change',()=>setTimeout(decorate,0));
+  decorate();
 })();
 
 </script>
