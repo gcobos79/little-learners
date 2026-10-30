@@ -5,7 +5,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2 });
   const errs = []; p.on('pageerror', e => errs.push(e.message));
   await install(p);
-  await p.goto('file:///home/claude/ll/LittleLearners_V6_1_0.html');
+  await p.goto('file:///home/claude/ll/LittleLearners_V6_2_0.html');
   await p.fill('#loginEmail', 'm@e.test'); await p.fill('#loginPassword', 'clave-prueba'); await p.click('#loginBtn');
   await p.waitForSelector('#studentGrid .ll-ring'); await sleep(500);
   const rings = () => p.$$eval('#studentGrid .studentbtn', bs => Object.fromEntries(bs.map(b => [b.childNodes[0].textContent.trim(), b.querySelector('.ll-ring')?.dataset.key])));

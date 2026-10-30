@@ -1,6 +1,14 @@
 # Changelog
 
-## V6.1.0 — 2026-10-29 · `index.html` (main site)
+## V6.2.0 — 2026-10-29 · `index.html` (main site)
+- Área field: removed the yellow «ABC» icon.
+- «Tiempo para responder»: now a slider from 3 to 6 seconds with a «N segundos» label.
+  - The original `#responseSeconds` select is kept, hidden and synchronized, so the assessment reads it exactly as before.
+  - Verified: the in-test hint shows the chosen time.
+- Student names on the cards: purple text on a white pill, so they are readable on green, coral and the selected gradient.
+- Original JavaScript unchanged. Regression: 104/104 identical vs V5.9.35. Ring checks pass.
+
+## V6.1.0 — 2026-10-29 · previous main site
 More colorful Evaluar screen, based on the owner's reference design. **The original JavaScript is still unchanged, byte for byte.**
 
 ### Look
