@@ -695,7 +695,7 @@ button{border:0;border-radius:13px;padding:13px 18px;font-size:16px;font-weight:
 
 </style>
 
-<!-- V6.2.0: Área sin ícono, tiempo para responder con control deslizante, nombres de estudiantes en morado. La lógica y Supabase no cambian. -->
+<!-- V6.3.0: gráficos en Reportes (indicadores, distribución y evolución mensual). La lógica y Supabase no cambian. -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* =====================================================================
@@ -1116,6 +1116,42 @@ body.in-test .confetti{display:none}
 .ll-name{justify-self:start;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#fff;color:#5B21B6;padding:3px 11px;border-radius:999px;font-weight:800;font-size:15.5px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 }
 
+/* V6.3.0 — Gráficos en Reportes */
+.charts-panel{padding:22px 24px}
+.charts-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.charts-scope{font-size:13.5px;color:#475569;font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.kpi{border:1px solid #E7E8F2;border-radius:16px;padding:14px 16px;background:#fff}
+.kpi .k-label{font-size:13px;font-weight:700;color:#475569}
+.kpi .k-val{font-size:30px;font-weight:800;letter-spacing:-.02em;color:#1E1B4B;line-height:1.15;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .k-note{font-size:12.5px;color:#64748B;margin-top:2px}
+.kpi .k-delta{display:inline-flex;align-items:center;gap:4px;font-weight:800}
+.kpi .k-delta.up{color:#047857}.kpi .k-delta.down{color:#B42318}.kpi .k-delta.flat{color:#475569}
+.kpi.support .k-val{color:#B42318}
+.charts-grid{display:grid;grid-template-columns:1fr 1.25fr;gap:16px}
+.chart-card{margin:0;border:1px solid #E7E8F2;border-radius:16px;padding:14px 16px 10px;background:#fff;min-width:0}
+.chart-card figcaption{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}
+.chart-card figcaption b{font-size:15.5px;color:#1E1B4B}
+.chart-card figcaption span{font-size:12.5px;color:#64748B}
+.chart-box svg{display:block;width:100%;height:auto;overflow:visible}
+.chart-box .axis text{font:600 11.5px var(--font,system-ui);fill:#64748B}
+.chart-box .grid line{stroke:#EEF0F6;stroke-width:1}
+.chart-box .val{font:800 12.5px var(--font,system-ui);fill:#1E1B4B}
+.chart-box .hit{fill:transparent;cursor:pointer}
+.chart-box .bar{transition:opacity .15s}
+.chart-box .dim .bar{opacity:.45}
+.chart-box .dim .bar.on{opacity:1}
+.chart-empty{display:grid;place-items:center;min-height:180px;color:#64748B;font-size:14px;text-align:center;padding:10px}
+.chart-tip{position:fixed;z-index:200;pointer-events:none;max-width:260px;background:#1E1B4B;color:#fff;border-radius:10px;padding:8px 11px;font-size:13px;line-height:1.4;box-shadow:0 8px 24px rgba(30,27,75,.25)}
+.chart-tip b{display:block;font-size:13.5px}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.charts-grid{grid-template-columns:1fr}}
+@media print{
+  #llCharts{break-inside:avoid}
+  .kpis{grid-template-columns:repeat(4,1fr)!important}
+  .charts-grid{grid-template-columns:1fr 1.25fr!important}
+  .kpi,.chart-card{border:1px solid #d8dde5!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
 </style>
 </head>
 <body>
@@ -1153,7 +1189,7 @@ body.in-test .confetti{display:none}
     <label for="loginPassword">Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••">
     <div id="loginError"></div>
     <button id="loginBtn" class="primary" type="button">Iniciar sesión</button>
-    <div class="login-foot">Developed by Geovanny Cobos · V6.2.0</div>
+    <div class="login-foot">Developed by Geovanny Cobos · V6.3.0</div>
   </section>
 </div>
 
@@ -1268,6 +1304,15 @@ body.in-test .confetti{display:none}
     </div>
     <div id="monthlyProgressReport" class="monthly-progress-report" style="display:none"></div>
     <div id="generalStudentReport" class="general-student-report" style="display:none"></div>
+    <section id="llCharts" class="panel charts-panel" aria-label="Resumen gráfico de la clase">
+      <div class="charts-head"><div class="panel-title small" style="margin:0">Resumen de la clase</div><div class="charts-scope" id="llChartsScope"></div></div>
+      <div class="kpis" id="llKpis"></div>
+      <div class="charts-grid">
+        <figure class="chart-card"><figcaption><b>Distribución de resultados</b><span id="llDistSub">Estudiantes por rango de dominio</span></figcaption><div id="llDist" class="chart-box"></div></figure>
+        <figure class="chart-card"><figcaption><b>Evolución de la clase</b><span id="llTrendSub">Promedio de la clase por mes</span></figcaption><div id="llTrend" class="chart-box"></div></figure>
+      </div>
+      <div id="llTip" class="chart-tip no-print" role="tooltip" hidden></div>
+    </section>
     <div class="panel results-panel"><div class="panel-title small no-print">Resultados</div><div id="reportList"></div></div>
     <div class="classanalysis panel">
       <h2 style="margin:0 0 4px">Análisis de la clase</h2>
@@ -1311,7 +1356,7 @@ body.in-test .confetti{display:none}
   </div>
   <div class="settings-section panel about-panel">
     <h2>Acerca de</h2>
-    <p>Little Learners · Early Learning Assessment System · <b>V6.2.0</b><br>Developed by Geovanny Cobos</p>
+    <p>Little Learners · Early Learning Assessment System · <b>V6.3.0</b><br>Developed by Geovanny Cobos</p>
   </div>
 
   <button class="secondary legacy-back" id="backSettingsBtn" type="button" style="margin-top:20px">← Volver a evaluación</button>
@@ -1411,7 +1456,7 @@ body.in-test .confetti{display:none}
       <button class="secondary" id="repeat">Evaluar nuevamente</button>
     </div>
   </section>
-  <footer class="app-foot no-print">Little Learners · V6.2.0 · Developed by Geovanny Cobos</footer>
+  <footer class="app-foot no-print">Little Learners · V6.3.0 · Developed by Geovanny Cobos</footer>
   </main>
 </div>
 
@@ -3597,6 +3642,137 @@ $('backClassBtn').addEventListener('click', () => {
     if(n&&n.nodeType===3&&n.textContent.trim()){const s=document.createElement('span');s.className='ll-name';s.textContent=n.textContent;b.replaceChild(s,n)}})}
   new MutationObserver(wrapNames).observe(grid,{childList:true});
   wrapNames();
+})();
+
+/* V6.3.0 — Gráficos en Reportes: indicadores, distribución y evolución mensual.
+   Solo lee los datos ya cargados (DATA_BY_MONTH) con los filtros de Reportes; no escribe en Supabase. */
+(function(){
+  const el=id=>document.getElementById(id);
+  const NS='http://www.w3.org/2000/svg';
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const tip=el('llTip');
+  function showTip(e,html){tip.innerHTML=html;tip.hidden=false;const r=tip.getBoundingClientRect();
+    let x=e.clientX+14,y=e.clientY-r.height-12;if(x+r.width>innerWidth-8)x=e.clientX-r.width-14;if(y<8)y=e.clientY+16;tip.style.left=x+'px';tip.style.top=y+'px'}
+  function hideTip(){tip.hidden=true}
+
+  function filters(){
+    const area=el('reportArea').value,lang=el('reportLanguage').value;
+    let type=el('reportCase').value;try{type=typeForArea(area,type)}catch(e){}
+    let language=lang;try{language=effectiveLanguage(area,lang)}catch(e){}
+    return {area,language,type};
+  }
+  const months=()=>[...el('assessmentMonth').options].map(o=>({key:o.value,label:o.text.replace(/\s\d{4}$/,'')}));
+  const monthLabel=()=>el('assessmentMonth').options[el('assessmentMonth').selectedIndex].text;
+  function activeNames(){try{return Array.isArray(STUDENTS)?STUDENTS:[]}catch(e){return []}}
+  // valores por estudiante para un mes: % de dominio (o conteo máximo en Conteo oral)
+  function valuesFor(month,f){
+    let recs=null;try{recs=DATA_BY_MONTH[month]?.[f.area]?.[f.language]?.records?.[f.type]||null}catch(e){}
+    if(!recs)return [];
+    const counting=f.area==='counting',out=[];
+    for(const name of activeNames()){const r=recs[name];if(!r||r.incomplete)continue;
+      if(counting){if(Number.isFinite(Number(r.maxCount)))out.push({name,v:Number(r.maxCount)})}
+      else{const tot=r.expectedCount||((r.correct||[]).length+(r.wrong||[]).length);if(tot>0)out.push({name,v:Math.round((r.correct||[]).length/tot*100)})}}
+    return out;
+  }
+  const avg=a=>a.length?a.reduce((s,x)=>s+x.v,0)/a.length:null;
+
+  function kpis(cur,prev,f){
+    const counting=f.area==='counting',n=activeNames().length,a=avg(cur),pa=avg(prev);
+    const unit=counting?'':'%',fmt=v=>v==null?'—':Math.round(v)+unit;
+    let delta='<span class="k-delta flat">Sin datos del mes anterior</span>';
+    if(a!=null&&pa!=null){const d=Math.round(a-pa);delta=d>0?`<span class="k-delta up">▲ +${d}${counting?'':' puntos'}</span> vs. mes anterior`:d<0?`<span class="k-delta down">▼ ${d}${counting?'':' puntos'}</span> vs. mes anterior`:'<span class="k-delta flat">= igual que el mes anterior</span>'}
+    const support=counting?null:cur.filter(x=>x.v<50).length;
+    const tiles=[
+      {l:counting?'Conteo promedio':'Promedio de la clase',v:fmt(a),n:delta},
+      {l:'Estudiantes evaluados',v:`${cur.length}/${n}`,n:n?Math.round(cur.length/n*100)+'% de la clase':''},
+      counting?{l:'Conteo más alto',v:cur.length?Math.max(...cur.map(x=>x.v)):'—',n:'Mejor resultado del mes'}
+              :{l:'Necesitan apoyo',v:cur.length?support:'—',n:'Menos de 50% de dominio',cls:'support'},
+      counting?{l:'Conteo más bajo',v:cur.length?Math.min(...cur.map(x=>x.v)):'—',n:'Resultado más bajo del mes'}
+              :{l:'Dominio alto',v:cur.length?cur.filter(x=>x.v>=75).length:'—',n:'75% o más de dominio'}
+    ];
+    el('llKpis').innerHTML=tiles.map(t=>`<div class="kpi${t.cls&&cur.length&&support?' '+t.cls:''}"><div class="k-label">${t.l}</div><div class="k-val">${t.v}</div><div class="k-note">${t.n}</div></div>`).join('');
+  }
+
+  function svg(w,h){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',`0 0 ${w} ${h}`);s.setAttribute('role','img');return s}
+  function add(p,tag,attrs,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;p.appendChild(e);return e}
+
+  function distribution(cur,f){
+    const box=el('llDist');box.innerHTML='';
+    if(!cur.length){box.innerHTML='<div class="chart-empty">Todavía no hay resultados de esta evaluación en el mes elegido.</div>';return}
+    const counting=f.area==='counting';
+    const bands=counting?[[0,9,'0–9'],[10,19,'10–19'],[20,29,'20–29'],[30,1e9,'30 o más']]:[[0,24,'0–24%'],[25,49,'25–49%'],[50,74,'50–74%'],[75,100,'75–100%']];
+    const shades=['#C9C6F9','#9E98F2','#6D64E8','#4338CA'];// una sola tonalidad, de claro a oscuro
+    const data=bands.map(([lo,hi,l])=>({l,names:cur.filter(x=>x.v>=lo&&x.v<=hi).map(x=>x.name)}));
+    el('llDistSub').textContent=counting?'Estudiantes por rango de conteo':'Estudiantes por rango de dominio';
+    const W=420,H=230,pl=30,pr=8,pt=22,pb=30,ih=H-pt-pb,iw=W-pl-pr,max=Math.max(1,...data.map(d=>d.names.length));
+    const step=Math.max(1,Math.ceil(max/4)),top=Math.ceil(max/step)*step;
+    const s=svg(W,H);const g=add(s,'g',{class:'grid'}),ax=add(s,'g',{class:'axis'});
+    for(let v=0;v<=top;v+=step){const y=pt+ih-(v/top)*ih;add(g,'line',{x1:pl,x2:W-pr,y1:y,y2:y});add(ax,'text',{x:pl-8,y:y+4,'text-anchor':'end'},v)}
+    const bw=iw/data.length,barW=Math.min(64,bw*.62),marks=add(s,'g',{});
+    s.setAttribute('aria-label','Distribución: '+data.map(d=>`${d.l}: ${d.names.length}`).join(', '));
+    data.forEach((d,i)=>{const x=pl+i*bw+(bw-barW)/2,hgt=d.names.length/top*ih,y=pt+ih-hgt;
+      if(d.names.length){const r=Math.min(4,hgt);add(marks,'path',{class:'bar',fill:shades[i],d:`M${x},${pt+ih}V${y+r}a${r},${r} 0 0 1 ${r},${-r}h${barW-2*r}a${r},${r} 0 0 1 ${r},${r}V${pt+ih}Z`})}
+      add(s,'text',{class:'val',x:x+barW/2,y:y-6,'text-anchor':'middle'},d.names.length);
+      add(ax,'text',{x:x+barW/2,y:H-10,'text-anchor':'middle'},d.l);
+      const hit=add(s,'rect',{class:'hit',x:pl+i*bw,y:pt,width:bw,height:ih});
+      hit.addEventListener('mousemove',e=>showTip(e,`<b>${esc(d.l)} · ${d.names.length} estudiante${d.names.length===1?'':'s'}</b>${d.names.length?esc(d.names.join(', ')):'Nadie en este rango'}`));
+      hit.addEventListener('mouseleave',hideTip);
+    });
+    add(s,'line',{x1:pl,x2:W-pr,y1:pt+ih,y2:pt+ih,stroke:'#CBD5E1','stroke-width':1});
+    box.appendChild(s);
+  }
+
+  function trend(f){
+    const box=el('llTrend');box.innerHTML='';
+    const counting=f.area==='counting',sel=el('assessmentMonth').value;
+    const pts=months().map(m=>{const v=valuesFor(m.key,f);return {k:m.key,l:m.label.slice(0,3),full:m.label,n:v.length,v:avg(v)}});
+    el('llTrendSub').textContent=counting?'Conteo promedio de la clase por mes':'Promedio de dominio de la clase por mes';
+    if(!pts.some(p=>p.v!=null)){box.innerHTML='<div class="chart-empty">Todavía no hay meses con resultados de esta evaluación.</div>';return}
+    const W=520,H=230,pl=36,pr=12,pt=22,pb=30,ih=H-pt-pb,iw=W-pl-pr;
+    const top=counting?Math.max(10,Math.ceil(Math.max(...pts.filter(p=>p.v!=null).map(p=>p.v))/10)*10):100;
+    const s=svg(W,H);const g=add(s,'g',{class:'grid'}),ax=add(s,'g',{class:'axis'});
+    for(let i=0;i<=4;i++){const v=top*i/4,y=pt+ih-(v/top)*ih;add(g,'line',{x1:pl,x2:W-pr,y1:y,y2:y});add(ax,'text',{x:pl-8,y:y+4,'text-anchor':'end'},Math.round(v)+(counting?'':'%'))}
+    const X=i=>pl+(iw/(pts.length-1))*i,Y=v=>pt+ih-(v/top)*ih;
+    pts.forEach((p,i)=>add(ax,'text',{x:X(i),y:H-10,'text-anchor':'middle','font-weight':p.k===sel?'800':'600',fill:p.k===sel?'#1E1B4B':'#64748B'},p.l));
+    // línea por tramos (no se une a través de meses sin datos)
+    let seg=[];const segs=[];pts.forEach((p,i)=>{if(p.v!=null)seg.push([X(i),Y(p.v)]);else if(seg.length){segs.push(seg);seg=[]}});if(seg.length)segs.push(seg);
+    segs.forEach(sg=>{if(sg.length>1)add(s,'path',{d:'M'+sg.map(q=>q.join(',')).join('L'),fill:'none',stroke:'#5B50F6','stroke-width':2.5,'stroke-linejoin':'round','stroke-linecap':'round'})});
+    const cross=add(s,'line',{x1:0,x2:0,y1:pt,y2:pt+ih,stroke:'#94A3B8','stroke-width':1,'stroke-dasharray':'3 3',display:'none'});
+    pts.forEach((p,i)=>{if(p.v==null)return;const isSel=p.k===sel;
+      add(s,'circle',{cx:X(i),cy:Y(p.v),r:isSel?7:5,fill:isSel?'#5B50F6':'#fff',stroke:'#5B50F6','stroke-width':2.5});
+      if(isSel)add(s,'text',{class:'val',x:X(i),y:Y(p.v)-13,'text-anchor':'middle'},Math.round(p.v)+(counting?'':'%'))});
+    const last=pts.map((p,i)=>[p,i]).filter(([p])=>p.v!=null).pop();
+    if(last&&last[0].k!==sel)add(s,'text',{class:'val',x:X(last[1]),y:Y(last[0].v)-12,'text-anchor':'middle'},Math.round(last[0].v)+(counting?'':'%'));
+    s.setAttribute('aria-label','Evolución: '+pts.filter(p=>p.v!=null).map(p=>`${p.full}: ${Math.round(p.v)}${counting?'':'%'}`).join(', '));
+    const hit=add(s,'rect',{class:'hit',x:pl,y:pt,width:iw,height:ih});
+    hit.addEventListener('mousemove',e=>{const r=s.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*W;
+      const i=Math.max(0,Math.min(pts.length-1,Math.round((vx-pl)/(iw/(pts.length-1))))),p=pts[i];
+      cross.setAttribute('x1',X(i));cross.setAttribute('x2',X(i));cross.removeAttribute('display');
+      showTip(e,`<b>${esc(p.full)}</b>${p.v==null?'Sin resultados':`${counting?'Conteo promedio':'Promedio'}: ${Math.round(p.v)}${counting?'':'%'} · ${p.n} estudiante${p.n===1?'':'s'}`}`)});
+    hit.addEventListener('mouseleave',()=>{cross.setAttribute('display','none');hideTip()});
+    add(s,'line',{x1:pl,x2:W-pr,y1:pt+ih,y2:pt+ih,stroke:'#CBD5E1','stroke-width':1});
+    box.appendChild(s);
+  }
+
+  let busy=false;
+  function render(){
+    if(busy)return;busy=true;
+    try{
+      const panel=el('llCharts');
+      const show=el('reportMode').value==='area';
+      panel.style.display=show?'':'none';
+      if(!show)return;
+      const f=filters();
+      const opts=[...el('assessmentMonth').options],i=el('assessmentMonth').selectedIndex;
+      const cur=valuesFor(el('assessmentMonth').value,f),prev=i>0?valuesFor(opts[i-1].value,f):[];
+      const areaTxt=el('reportArea').options[el('reportArea').selectedIndex].text;
+      el('llChartsScope').textContent=`${areaTxt} · ${el('reportLanguage').options[el('reportLanguage').selectedIndex].text}${['letters'].includes(f.area)?' · '+el('reportCase').options[el('reportCase').selectedIndex].text:''} · ${monthLabel()} · toda la clase`;
+      kpis(cur,prev,f);distribution(cur,f);trend(f);
+    }catch(e){console.error('Gráficos de reportes:',e)}finally{busy=false}
+  }
+  new MutationObserver(render).observe(el('reportList'),{childList:true});
+  ['reportMode','reportArea','reportLanguage','reportCase','assessmentMonth'].forEach(id=>el(id).addEventListener('change',()=>setTimeout(render,0)));
+  render();
 })();
 
 </script>

@@ -6,7 +6,7 @@ A web app for monthly Pre-K assessments (letters, numbers, shapes, colors, phono
 ## What is where
 | Path | What it is | Live address |
 |---|---|---|
-| `index.html` | **Main site.** The version used in class. Currently **V6.2.0**. | `https://gcobos79.github.io/little-learners/` |
+| `index.html` | **Main site.** The version used in class. Currently **V6.3.0**. | `https://gcobos79.github.io/little-learners/` |
 | `versions/` | Every released version, kept unchanged so you can always go back. | — |
 | `tests/` | Automated tests that run the whole app against a *simulated* Supabase (fake data, never the real database). | — |
 

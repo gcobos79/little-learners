@@ -1,6 +1,16 @@
 # Changelog
 
-## V6.2.0 — 2026-10-29 · `index.html` (main site)
+## V6.3.0 — 2026-10-29 · `index.html` (main site)
+Charts in **Reportes** («Por área» mode), placed above the per-student list.
+- **Four key figures:** class average with the change from the previous month, students evaluated, students needing support (<50 %), and students with high mastery (≥75 %).
+  - For Conteo oral the figures are counts instead: average, highest and lowest.
+- **Distribución de resultados:** a column chart of students per mastery range, in a single-hue sequential scale. Hovering a bar lists the students in that range.
+- **Evolución de la clase:** a line chart of the class average per month, August to May. The selected month is highlighted, and hovering shows a crosshair and tooltip.
+- The charts follow the report filters and the working month, and they print with the report.
+- Data is read from what the app already loaded; nothing is written to Supabase.
+- Original JavaScript unchanged. Regression: 104/104 identical vs V5.9.35. Ring, print and logout checks pass.
+
+## V6.2.0 — 2026-10-29 · previous main site
 - Área field: removed the yellow «ABC» icon.
 - «Tiempo para responder»: now a slider from 3 to 6 seconds with a «N segundos» label.
   - The original `#responseSeconds` select is kept, hidden and synchronized, so the assessment reads it exactly as before.
