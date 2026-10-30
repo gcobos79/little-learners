@@ -694,73 +694,459 @@ button{border:0;border-radius:13px;padding:13px 18px;font-size:16px;font-weight:
 #sentenceStage .rhyme-choice-buttons{display:flex;align-items:center}
 
 </style>
+
+<!-- V6.0.0: rediseño visual y nueva organización (Evaluar · Reportes · Mi clase · Configuración). La lógica y Supabase no cambian. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   V6.0.0 — Little Learners · Sistema de diseño
+   Capa visual nueva. No cambia la lógica; se apoya en los mismos ids.
+   Las reglas de impresión originales se conservan (más abajo solo se
+   neutralizan los paneles nuevos al imprimir).
+   ===================================================================== */
+:root{
+  --brand:#5B57E6; --brand-700:#4338CA; --brand-800:#3730A3; --brand-50:#F0EFFE; --brand-100:#E2E0FD;
+  --sun:#F6B11E; --sun-50:#FFF7E3;
+  --mint:#0E9F77; --mint-700:#0B7A5C; --mint-50:#E6F6F0; --mint-100:#C9EDDF;
+  --coral:#E5576B; --coral-700:#B83A4E; --coral-50:#FDEEF0; --coral-100:#F9D3D9;
+  --ink:#1B1E33; --ink-2:#3B3F5C; --muted:#6B7092; --line:#E6E7F1; --line-2:#D8DAE8;
+  --bg:#F5F5FB; --surface:#FFFFFF;
+  --r-sm:10px; --r:14px; --r-lg:20px;
+  --sh-1:0 1px 2px rgba(27,30,51,.05);
+  --sh-2:0 1px 2px rgba(27,30,51,.04),0 6px 20px rgba(27,30,51,.06);
+  --sh-3:0 10px 40px rgba(27,30,51,.16);
+  --font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-brand:"Fredoka","Plus Jakarta Sans",system-ui,sans-serif;
+  /* variables antiguas reasignadas a la nueva paleta */
+  --card:var(--surface); --accent:var(--brand); --ok:var(--mint); --bad:var(--coral);
+}
+@media screen{
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+h1,h2,h3{letter-spacing:-.015em;color:var(--ink)}
+h1{font-size:28px;font-weight:800;margin:0 0 6px}
+h2{font-weight:800}
+.sub{color:var(--muted);margin-bottom:0}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+
+/* ---------- botones ---------- */
+button{font-family:inherit;border-radius:12px;padding:12px 18px;font-size:15.5px;font-weight:700;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,box-shadow .15s,border-color .15s,transform .05s;touch-action:manipulation}
+button:active{transform:translateY(1px)}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid rgba(91,87,230,.35);outline-offset:2px}
+.primary{background:var(--brand);color:#fff;box-shadow:0 1px 2px rgba(67,56,202,.25),0 4px 12px rgba(91,87,230,.22)}
+.primary:hover{background:var(--brand-700)}
+.primary:disabled{background:#B9B7F3;box-shadow:none;cursor:not-allowed}
+.secondary{background:#fff;color:var(--ink-2);border:1px solid var(--line-2);box-shadow:var(--sh-1)}
+.secondary:hover{background:#F8F8FD;border-color:#C9CCE0}
+.danger{background:var(--coral-50);color:var(--coral-700);border:1px solid var(--coral-100)}
+.danger-btn{background:#fff;color:var(--coral-700);border:1px solid #F3B8C2}
+.danger-btn:hover{background:var(--coral-50)}
+.btn-lg{min-height:56px;font-size:17px;padding:14px 22px;border-radius:14px}
+
+/* ---------- campos ---------- */
+label{font-weight:700;font-size:13.5px;color:var(--ink-2);margin:0 0 7px;letter-spacing:.005em}
+select,input[type=text],input[type=email],input[type=password]{font-family:inherit;font-size:16px;min-height:48px;padding:11px 14px;border:1px solid var(--line-2)!important;border-radius:12px!important;background-color:#fff;color:var(--ink)!important;-webkit-text-fill-color:var(--ink);box-shadow:var(--sh-1);transition:border-color .15s,box-shadow .15s}
+select{appearance:none;-webkit-appearance:none;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236B7092' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px;cursor:pointer}
+select:hover,input[type=text]:hover{border-color:#C3C6DB!important}
+select:focus,input[type=text]:focus,input[type=email]:focus,input[type=password]:focus{outline:none;border-color:var(--brand)!important;box-shadow:0 0 0 4px rgba(91,87,230,.14)}
+input::placeholder{color:#9A9EB8!important;-webkit-text-fill-color:#9A9EB8}
+.field{min-width:170px;margin-bottom:14px}
+.row{gap:14px}
+.check{margin:6px 0 16px;font-weight:600;color:var(--ink-2);font-size:15px;cursor:pointer}
+.check input{width:22px;height:22px;accent-color:var(--brand)}
+/* quitar los iconos emoji antiguos de las etiquetas */
+#setup .field label{color:var(--ink-2);font-weight:700}
+#setup .field label::before{content:none!important}
+#setup select{border-color:var(--line-2)}
+
+/* ---------- barra superior ---------- */
+#appView{min-height:100vh}
+.shell{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.shell-inner{max-width:1200px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:18px;min-height:68px}
+.shell-brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.logo-mark{display:inline-flex;width:38px;height:38px}.logo-mark svg{width:100%;height:100%}
+.logo-mark.big{width:64px;height:64px}
+.shell-name{font-family:var(--font-brand);font-weight:600;font-size:21px;letter-spacing:-.01em;color:var(--ink);white-space:nowrap}
+.brand-sparkle{font-size:.8em}
+.shell-nav{display:flex;gap:4px;margin:0 auto;background:#F1F1F8;padding:4px;border-radius:14px;border:1px solid var(--line)}
+.navtab{background:transparent;color:var(--muted);border:0;box-shadow:none;min-height:42px;padding:9px 16px;border-radius:11px;font-weight:700;font-size:15px}
+.navtab:hover{color:var(--ink);background:rgba(255,255,255,.7)}
+.navtab[aria-current="page"]{background:#fff;color:var(--brand-700);box-shadow:0 1px 2px rgba(27,30,51,.08),0 2px 8px rgba(27,30,51,.06)}
+.navtab[aria-current="page"] .ic{color:var(--brand)}
+.shell-tools{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.month-chip{display:flex;align-items:center;gap:0;min-width:0;margin:0;background:#fff;border:1px solid var(--line-2);border-radius:12px;padding-left:12px;box-shadow:var(--sh-1)}
+.month-chip label{display:flex;align-items:center;gap:6px;margin:0;color:var(--brand-700);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.month-chip label .ic{width:18px;height:18px}
+.month-chip select{border:0!important;box-shadow:none!important;min-height:42px;padding:8px 36px 8px 8px;font-weight:700;width:auto;background-color:transparent}
+.month-chip:focus-within{border-color:var(--brand);box-shadow:0 0 0 4px rgba(91,87,230,.14)}
+.icon-btn{background:#fff;color:var(--ink-2);border:1px solid var(--line-2);box-shadow:var(--sh-1);min-height:44px;padding:9px 13px}
+.icon-btn:hover{color:var(--coral-700);border-color:var(--coral-100);background:var(--coral-50)}
+body.in-test .shell,body.in-test .app-foot{display:none!important}
+body.in-test{background:#fff}
+
+/* ---------- contenedor y páginas ---------- */
+.wrap{max-width:1200px;margin:0 auto;padding:28px 24px 12px}
+#appView>main>section.page{background:none;border:0;box-shadow:none;padding:0;border-radius:0}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:4px 0 22px}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:6px}
+.page-head h1{font-size:30px;margin:0 0 4px}
+.page-actions{display:flex;gap:10px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;box-shadow:var(--sh-2);margin-bottom:20px}
+.panel-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;margin:0 0 18px;color:var(--ink)}
+.panel-title.small{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:14px}
+.step{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--brand-50);color:var(--brand-700);font-size:14px;font-weight:800}
+.legacy-back{display:none!important}
+.app-foot{text-align:center;color:#9A9EB8;font-size:12.5px;padding:18px 0 26px}
+.card{border-color:var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2)}
+
+/* ---------- Evaluar ---------- */
+.eval-layout{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:20px;align-items:start}
+.eval-config{position:sticky;top:92px}
+.eval-config .row{flex-direction:column;gap:0}
+.eval-config .field{min-width:0;width:100%}
+.start-box{border-top:1px solid var(--line);margin-top:6px;padding-top:18px}
+.start-summary{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px;font-size:15px}
+.muted-label{color:var(--muted);font-weight:600;font-size:13.5px}
+#startSummary{font-size:17px;color:var(--ink);text-align:right}
+#start{width:100%}
+#start .ic{fill:currentColor;stroke:none;width:18px;height:18px}
+.monthhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:-4px 0 16px;padding:14px 16px;background:#F8F8FC;border:1px solid var(--line);border-radius:var(--r)}
+.monthtitle{font-size:17px;font-weight:800}
+.count{color:var(--muted);font-weight:600;font-size:14px}
+.legend{display:flex;gap:14px;font-size:13px;font-weight:700;color:var(--muted)}
+.lg{display:inline-flex;align-items:center;gap:6px}
+.lg::before{content:"";width:10px;height:10px;border-radius:50%}
+.lg-pending::before{background:var(--coral)}
+.lg-done::before{background:var(--mint)}
+.studentgrid{grid-template-columns:repeat(auto-fill,minmax(182px,1fr));gap:12px;margin:0 0 16px}
+#setup h1{color:var(--ink)}
+.studentbtn{position:relative;display:block;text-align:left;min-height:76px;padding:14px 40px 14px 16px;border-radius:var(--r);background:#fff;border:1px solid var(--line-2);box-shadow:var(--sh-1);color:var(--ink);font-size:16.5px;font-weight:800;line-height:1.2}
+.studentbtn:hover{border-color:#C3C6DB;box-shadow:var(--sh-2)}
+.studentbtn .statusline{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:13px;font-weight:700;color:var(--coral-700)}
+.studentbtn .statusline::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--coral);flex:0 0 auto}
+.studentbtn.done{background:var(--mint-50);border-color:var(--mint-100)}
+.studentbtn.done .statusline{color:var(--mint-700)}
+.studentbtn.done .statusline::before{background:var(--mint)}
+.studentbtn.done::after{content:"✓";position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:var(--mint);color:#fff;font-size:13px;font-weight:900;display:grid;place-items:center}
+.studentbtn.selected{border-color:var(--brand);box-shadow:0 0 0 3px rgba(91,87,230,.22),var(--sh-2);background:var(--brand-50)}
+.studentbtn.selected.done{background:linear-gradient(0deg,rgba(91,87,230,.06),rgba(91,87,230,.06)),var(--mint-50)}
+.tip{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:13.5px;background:var(--sun-50);border:1px solid #F9E2A8;border-radius:12px;padding:11px 13px}
+.tip .ic{color:#B7800A;margin-top:1px;width:19px;height:19px}
+
+/* ---------- Reportes ---------- */
+.report-month-alert{color:var(--muted)!important;font-weight:600}
+.report-month-alert #reportMonthTitle{display:inline-block;background:var(--brand-50);color:var(--brand-700);font-weight:800;padding:3px 10px;border-radius:999px;margin-right:2px}
+#printReportBtn .ic{width:19px;height:19px}
+.filters-panel .row{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:0 14px}
+.filters-panel .field{min-width:0}
+.filters-tip{font-size:13px;color:var(--muted);margin-top:2px}
+.results-panel{padding:10px 14px 14px}
+.results-panel .panel-title{margin:10px 10px 6px}
+.reportrow{border-top:1px solid var(--line);padding:14px 12px;border-radius:12px;transition:background .12s}
+.reportrow:first-child{border-top:0}
+.reportrow:hover{background:#F7F7FC}
+.reportname{font-size:16px}
+.reportmeta{font-size:13.5px}
+.reportscore{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
+.progressbar{height:8px;background:#ECECF5;max-width:380px}
+.progressfill{background:linear-gradient(90deg,var(--mint),#33C29A)}
+.classanalysis{border-top:1px solid var(--line);margin-top:0;padding-top:24px}
+.classanalysis h2{font-size:20px}
+.analysisnote{background:#F8F8FC;border:1px solid var(--line);color:var(--muted)}
+.needletter{color:var(--ink)}
+.needtrack{background:var(--mint-100);height:12px}
+.needfill{background:linear-gradient(90deg,#EE8090,var(--coral))}
+.classanalysis .mastery-fill,.classanalysis .bar>span,.classanalysis .bar-fill{background:var(--mint-100)!important}
+.detail.panel{border-top:1px solid var(--line);padding-top:24px}
+.bigpercent{color:var(--brand-700);font-variant-numeric:tabular-nums}
+.sectionlabel{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.miniTrack{background:#ECECF5}.miniFill{background:linear-gradient(90deg,var(--brand),#8B87F2)}
+.monthly-progress-report,.general-head,.general-section{border-color:var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2);background:#fff}
+.monthly-progress-report{padding:24px;margin:0 0 20px}
+.general-head{background:linear-gradient(135deg,var(--brand-50),#fff)}
+.progress-chart-bar,.progress-chart-bar.zero{background:linear-gradient(180deg,#8B87F2,var(--brand))}
+.progress-chart-value{color:var(--brand-700)}
+.progress-summary-item{background:#F8F8FC;border:1px solid var(--line)}
+.mastery-learned{background:var(--mint-100)}.mastery-learning{background:var(--coral-100)}
+.general-class-table th{background:#F8F8FC}
+.pill{background:#F1F1F8;border-radius:9px;padding:7px 11px;font-weight:800}
+#detailCorrect .pill,#correctList .pill{background:var(--mint-50);color:var(--mint-700);border:1px solid var(--mint-100)}
+#detailWrong .pill,#wrongList .pill{background:var(--coral-50);color:var(--coral-700);border:1px solid var(--coral-100)}
+
+/* ---------- Mi clase y Configuración ---------- */
+.hint-text{font-size:13.5px;margin-top:12px}
+#classRoster .class-item{padding:14px 6px;border-bottom:1px solid var(--line)}
+#classRoster .class-item:last-child{border-bottom:0}
+.class-name{font-size:16.5px}
+.class-state{color:var(--muted)}
+.class-actions button{min-height:40px;padding:8px 14px;font-size:14px}
+.settings-section{background:#fff;border-color:var(--line);margin-top:0}
+.settings-section h2{color:var(--ink);font-size:19px}
+.danger-details{border-color:var(--line-2);border-radius:var(--r)}
+.danger-details summary{padding:15px 18px;color:var(--ink-2)}
+.danger-details-body h3{color:var(--coral-700)}
+.about-panel p{margin:0;color:var(--muted);line-height:1.6}
+
+/* ---------- Pantalla de evaluación (la ve el niño) ---------- */
+#test{max-width:980px;margin:12px auto 0;border-radius:28px;padding:26px 30px 30px;box-shadow:0 2px 6px rgba(27,30,51,.04),0 20px 60px rgba(27,30,51,.08);border:1px solid var(--line)}
+#test .top{align-items:center}
+#who{background:var(--brand-50);color:var(--brand-700);padding:7px 14px;border-radius:999px;font-weight:800;font-size:15px}
+#progress{background:#F3F3F9;color:var(--muted);padding:7px 14px;border-radius:999px;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+.timer{height:14px;background:#EEEEF6;border-radius:999px}
+.timer>div{background:linear-gradient(90deg,var(--brand),#8B87F2);border-radius:999px}
+.hint{color:#9A9EB8;font-size:13.5px}
+.pausebox h2{font-size:30px}
+.rhyme-choice-btn{min-height:60px;border-radius:16px;font-size:18px}
+.rhyme-correct-btn{background:var(--mint-50);border-color:var(--mint-100);color:var(--mint-700)}
+.rhyme-incorrect-btn{background:var(--coral-50);border-color:var(--coral-100);color:var(--coral-700)}
+.pattern-choice{border-color:var(--line-2);border-radius:18px}
+.counting-stage{border-color:var(--line)}
+
+/* ---------- Resultado ---------- */
+#result{max-width:980px;margin:12px auto 0;padding:30px;border-radius:24px}
+.result-head{display:flex;align-items:center;gap:16px}
+.result-badge{width:56px;height:56px;border-radius:16px;background:var(--sun-50);border:1px solid #F9E2A8;display:grid;place-items:center;font-size:28px;flex:0 0 auto}
+.result-head h1{margin:0}
+#score{font-size:56px;font-weight:800;letter-spacing:-.02em;margin:18px 0 8px;font-variant-numeric:tabular-nums}
+.result-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.result-col{border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;background:#FBFBFE}
+.result-col strong{font-size:14px;text-transform:uppercase;letter-spacing:.06em}
+.ok-col strong{color:var(--mint-700)}.bad-col strong{color:var(--coral-700)}
+.result-col .pills{margin:12px 0 0}
+.result-actions{margin-top:22px}
+
+/* ---------- Ventanas emergentes ---------- */
+.month-warning-overlay,.reset-data-overlay,#studentResultsOverlay{background:rgba(27,30,51,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.month-warning-box,.reset-data-box,#studentResultsPanel{border-radius:22px;box-shadow:var(--sh-3);border:1px solid var(--line)}
+.month-warning-box h2{color:#A15C07}
+.reset-data-box{border-color:var(--coral-100)}
+.reset-data-box h2{color:var(--coral-700)}
+#studentEvalMenu{border-radius:16px;border-color:var(--line);box-shadow:var(--sh-3);padding:12px}
+#studentEvalMenu button{justify-content:flex-start}
+#studentEvalMenu .context-view{color:var(--brand-700);background:var(--brand-50);border:1px solid var(--brand-100)}
+#studentEvalMenu .context-delete{color:var(--coral-700);background:var(--coral-50);border:1px solid var(--coral-100)}
+#studentResultsPanel .result-chip{background:var(--mint-50)}
+#studentResultsPanel .result-chip.bad{background:var(--coral-50)}
+
+/* ---------- Inicio de sesión ---------- */
+#loginView.login-shell{display:grid;grid-template-columns:1.05fr 1fr;min-height:100vh;max-width:none;margin:0}
+.login-hero{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 0% 0%,#7C78F5 0%,#5B57E6 45%,#3730A3 100%);color:#fff;display:flex;align-items:center;padding:56px}
+.hero-copy{position:relative;z-index:2;max-width:460px}
+.hero-title{font-family:var(--font-brand);font-weight:600;font-size:clamp(38px,4.4vw,56px);line-height:1.05;margin:22px 0 10px;letter-spacing:-.01em}
+.hero-tagline{font-size:17px;opacity:.85;font-weight:600}
+.hero-points{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px}
+.hero-points li{display:flex;gap:10px;align-items:center;font-weight:600;opacity:.95}
+.hero-points li::before{content:"✓";display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.18);font-size:13px;font-weight:900}
+.hero-tiles .t{position:absolute;display:grid;place-items:center;font-family:var(--font-brand);font-weight:700;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:22px;backdrop-filter:blur(2px)}
+.t1{width:110px;height:110px;font-size:58px;right:9%;top:10%;transform:rotate(8deg)}
+.t2{width:84px;height:84px;font-size:44px;right:30%;top:30%;transform:rotate(-10deg);background:rgba(246,177,30,.35)!important}
+.t3{width:96px;height:96px;font-size:50px;right:6%;bottom:16%;transform:rotate(-6deg)}
+.t4{width:70px;height:70px;font-size:30px;left:8%;bottom:9%;transform:rotate(12deg);background:rgba(14,159,119,.35)!important}
+.t5{width:74px;height:74px;font-size:38px;right:24%;bottom:6%;transform:rotate(9deg)}
+.t6{width:58px;height:58px;font-size:26px;left:40%;top:7%;transform:rotate(-8deg);background:rgba(229,87,107,.35)!important}
+.login-card{align-self:center;justify-self:center;width:min(440px,92vw);margin:40px 0;padding:36px 34px;border-radius:24px}
+.login-card .brand{display:none}
+.login-heading{font-size:28px;margin:0 0 4px}
+.login-card .sub{margin-bottom:24px}
+.login-card label{margin-top:4px}
+#loginView input[type=email],#loginView input[type=password]{width:100%;margin-bottom:16px}
+#loginError{color:var(--coral-700);min-height:22px;margin:0 0 10px;font-size:14.5px}
+#loginBtn{width:100%;min-height:52px;font-size:16.5px}
+.login-foot{text-align:center;color:#9A9EB8;font-size:12.5px;margin-top:22px}
+
+/* ---------- Adaptación a tabletas y pantallas pequeñas ---------- */
+@media (max-width:1100px){
+  .shell-inner{flex-wrap:wrap;row-gap:10px;padding:10px 18px}
+  .shell-nav{order:3;width:100%;margin:0;display:grid;grid-template-columns:repeat(4,1fr)}
+  .navtab{justify-content:center}
+  .shell-tools{margin-left:auto}
+  .eval-config{position:static}
+}
+@media (max-width:900px){
+  .eval-layout{grid-template-columns:1fr}
+  .eval-config .row{flex-direction:row;flex-wrap:wrap;gap:0 14px}
+  .eval-config .row .field{flex:1;min-width:170px;width:auto}
+  .wrap{padding:22px 18px 10px}
+  #loginView.login-shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .login-hero{padding:34px 28px 30px;min-height:240px}
+  .hero-points{display:none}
+  .hero-title{margin-top:14px}
+  .hero-tiles .t1{width:86px;height:86px;font-size:44px}.hero-tiles .t2,.hero-tiles .t5{display:none}.hero-tiles .t3{width:70px;height:70px;font-size:36px;bottom:12%}
+  .login-card{margin:-26px 0 30px;position:relative;z-index:3;align-self:start}
+  .hero-tiles .t4,.hero-tiles .t6{display:none}
+  .hero-copy{max-width:62%}
+}
+@media (max-width:640px){
+  .shell-name{font-size:18px}
+  .navtab span{font-size:13.5px}
+  .navtab{flex-direction:column;gap:3px;padding:7px 4px;min-height:54px}
+  .icon-btn .lbl{display:none}
+  .month-chip label span{display:none}
+  .page-head h1{font-size:25px}
+  .panel{padding:18px;border-radius:18px}
+  .studentgrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .result-cols{grid-template-columns:1fr}
+  #test{padding:18px;border-radius:22px}
+}
+}
+
+/* Al imprimir: los paneles nuevos no deben agregar marcos ni sombras */
+@media print{
+  .shell,.app-foot,.filters-panel{display:none!important}
+  #reports .panel{border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 10pt!important;background:#fff!important;border-radius:0!important}
+  #reports .page-head{display:block!important;margin:0 0 8pt!important}
+  #reports .eyebrow,#reports .results-panel>.panel-title{display:none!important}
+}
+
+</style>
 </head>
 <body>
-<div id="loginView" class="wrap"><section class="card"><div class="brand"><div class="brand-title">Little Learners <span class="brand-sparkle">✨</span></div><div class="brand-tagline">Early Learning Assessment System</div><div class="brand-credit">Developed by Geovanny Cobos</div></div><div class="sub">Acceso seguro</div><label>Correo electrónico</label><input id="loginEmail" type="email" autocomplete="username"><label>Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password"><div id="loginError"></div><button id="loginBtn" class="primary" type="button">Iniciar sesión</button></section></div><div id="appView" class="wrap" style="display:none">
-  <section id="setup" class="card">
-    <div class="brand brand-main"><div class="brand-title">Little Learners <span class="brand-sparkle">✨</span></div><div class="brand-tagline">Early Learning Assessment System</div><div class="brand-credit">Developed by Geovanny Cobos</div></div>
-    <h1 id="setupTitle">Evaluación de Letras</h1>
-    <div class="sub" id="setupSubtitle">Evaluación mensual — 27 letras del alfabeto español</div>
-    <div class="navrow"><button class="secondary" id="reportsBtn" type="button">📊 Ver reportes</button>
-<button class="secondary" id="classBtn" type="button">👥 Mi clase</button>
-<button class="secondary" id="settingsBtn" type="button">⚙️ Configuración</button></div>
-    <div class="monthhead">
-      <div><div class="monthtitle" id="monthTitle">Octubre 2026</div><div class="count" id="monthCount">0 de 5 estudiantes evaluados</div></div>
-<div class="field" style="min-width:190px;margin:0"><label>Mes de evaluación</label><select id="assessmentMonth">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="llGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6E6AF0"/><stop offset="1" stop-color="#4338CA"/></linearGradient>
+    <symbol id="i-eval" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><path d="M8 5H6.5A1.5 1.5 0 0 0 5 6.5v13A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 17.5 5H16"/><path d="m9 13.5 2 2 4-4.5"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 16v-5"/><path d="M12 16V7"/><path d="M17 16v-8"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.6-3 2.9-4.7 5.5-4.7s4.9 1.7 5.5 4.7"/><circle cx="17" cy="9.5" r="2.5"/><path d="M15.8 14.6c2.3.1 4 1.6 4.7 4.4"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M14 4h3.5A1.5 1.5 0 0 1 19 5.5v13a1.5 1.5 0 0 1-1.5 1.5H14"/><path d="M10 16l-4-4 4-4M6 12h9"/></symbol>
+    <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7.5" rx="2"/><path d="M7 14h10v6H7z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5Z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-touch" viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 10.5a1.5 1.5 0 0 1 3 0V12"/><path d="M15 11.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.6-2.2L4.5 16a1.6 1.6 0 0 1 2.4-2.1L9 16"/></symbol>
+  </defs>
+</svg>
+
+<div id="loginView" class="login-shell">
+  <aside class="login-hero" aria-hidden="true">
+    <div class="hero-tiles"><span class="t t1">A</span><span class="t t2">b</span><span class="t t3">7</span><span class="t t4">▲</span><span class="t t5">Ñ</span><span class="t t6">●</span></div>
+    <div class="hero-copy">
+      <div class="logo-mark big"><svg viewBox="0 0 48 48"><rect width="48" height="48" rx="14" fill="#fff" fill-opacity=".16"/><path d="M17 13v20h14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33" cy="15" r="4" fill="#F6B11E"/></svg></div>
+      <div class="hero-title">Little Learners <span class="brand-sparkle">✨</span></div>
+      <div class="hero-tagline">Early Learning Assessment System</div>
+      <ul class="hero-points"><li>Evaluaciones mensuales rápidas y precisas</li><li>Reportes claros por estudiante y por clase</li><li>Progreso de cada niño a lo largo del año</li></ul>
+    </div>
+  </aside>
+  <section class="card login-card">
+    <div class="brand"><div class="brand-title">Little Learners <span class="brand-sparkle">✨</span></div><div class="brand-tagline">Early Learning Assessment System</div><div class="brand-credit">Developed by Geovanny Cobos</div></div>
+    <h1 class="login-heading">Bienvenido</h1>
+    <div class="sub">Acceso seguro · Inicia sesión con tu cuenta</div>
+    <label for="loginEmail">Correo electrónico</label><input id="loginEmail" type="email" autocomplete="username" placeholder="nombre@escuela.org">
+    <label for="loginPassword">Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••">
+    <div id="loginError"></div>
+    <button id="loginBtn" class="primary" type="button">Iniciar sesión</button>
+    <div class="login-foot">Developed by Geovanny Cobos · V6.0.0</div>
+  </section>
+</div>
+
+<div id="appView" style="display:none">
+  <header id="appShellBar" class="shell no-print">
+    <div class="shell-inner">
+      <div class="shell-brand">
+        <span class="logo-mark"><svg viewBox="0 0 48 48"><rect width="48" height="48" rx="14" fill="url(#llGrad)"/><path d="M17 13v20h14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33" cy="15" r="4" fill="#F6B11E"/></svg></span>
+        <span class="shell-name">Little Learners <span class="brand-sparkle">✨</span></span>
+      </div>
+      <nav id="appNav" class="shell-nav" aria-label="Secciones">
+        <button type="button" class="navtab" id="navEvaluate"><svg class="ic"><use href="#i-eval"/></svg><span>Evaluar</span></button>
+        <button type="button" class="navtab" id="reportsBtn"><svg class="ic"><use href="#i-chart"/></svg><span>Reportes</span></button>
+        <button type="button" class="navtab" id="classBtn"><svg class="ic"><use href="#i-users"/></svg><span>Mi clase</span></button>
+        <button type="button" class="navtab" id="settingsBtn"><svg class="ic"><use href="#i-gear"/></svg><span>Configuración</span></button>
+      </nav>
+      <div class="shell-tools">
+        <div class="field month-chip" title="Mes de trabajo: se usa para evaluar y para los reportes">
+          <label for="assessmentMonth"><svg class="ic"><use href="#i-cal"/></svg><span>Mes</span></label>
+          <select id="assessmentMonth">
 <option value="2026-08">Agosto 2026</option><option value="2026-09">Septiembre 2026</option>
 <option value="2026-10" selected>Octubre 2026</option><option value="2026-11">Noviembre 2026</option>
 <option value="2026-12">Diciembre 2026</option><option value="2027-01">Enero 2027</option>
 <option value="2027-02">Febrero 2027</option><option value="2027-03">Marzo 2027</option>
-<option value="2027-04">Abril 2027</option><option value="2027-05">Mayo 2027</option></select></div>
+<option value="2027-04">Abril 2027</option><option value="2027-05">Mayo 2027</option></select>
+        </div>
+        <button type="button" class="icon-btn" id="logoutBtn" title="Cerrar sesión" aria-label="Cerrar sesión"><svg class="ic"><use href="#i-out"/></svg><span class="lbl">Salir</span></button>
+      </div>
     </div>
-    <label>Selecciona un estudiante</label>
-    <div id="studentGrid" class="studentgrid"></div>
-    <div class="row">
-      <div class="field"><label>Área</label><select id="area"><optgroup label="Literatura y lenguaje"><option value="letters">Letras</option><option value="syllables">Sílabas</option><option value="rhymes">Rimas</option><option value="alliteration">Aliteración</option><option value="sentences">Repetición de frases</option></optgroup><optgroup label="Matemáticas"><option value="numbers">Números</option><option value="counting">Conteo</option><option value="shapes">Figuras</option><option value="colors">Colores</option><option value="patterns">Patrones</option></optgroup></select></div>
-      <div class="field" id="languageField"><label>Idioma</label><select id="language"><option value="es">Español</option><option value="en">English</option></select></div>
-      <div class="field" id="caseField"><label>Tipo</label><select id="case"><option value="upper">Mayúsculas</option><option value="lower">Minúsculas</option><option value="sound">Sonidos</option></select></div>
+  </header>
+
+  <main class="wrap">
+  <section id="setup" class="card page">
+    <div class="page-head">
+      <div>
+        <div class="eyebrow">Evaluar</div>
+        <h1 id="setupTitle">Evaluación de Letras</h1>
+        <div class="sub" id="setupSubtitle">Evaluación mensual — 27 letras del alfabeto español</div>
+      </div>
     </div>
-    <div class="field" id="responseTimeField"><label>Tiempo para responder</label>
+    <div class="eval-layout">
+      <div class="panel eval-config">
+        <div class="panel-title"><span class="step">1</span>¿Qué vas a evaluar?</div>
+        <div class="row">
+          <div class="field"><label for="area">Área</label><select id="area"><optgroup label="Literatura y lenguaje"><option value="letters">Letras</option><option value="syllables">Sílabas</option><option value="rhymes">Rimas</option><option value="alliteration">Aliteración</option><option value="sentences">Repetición de frases</option></optgroup><optgroup label="Matemáticas"><option value="numbers">Números</option><option value="counting">Conteo</option><option value="shapes">Figuras</option><option value="colors">Colores</option><option value="patterns">Patrones</option></optgroup></select></div>
+          <div class="field" id="languageField"><label for="language">Idioma</label><select id="language"><option value="es">Español</option><option value="en">English</option></select></div>
+          <div class="field" id="caseField"><label for="case">Tipo</label><select id="case"><option value="upper">Mayúsculas</option><option value="lower">Minúsculas</option><option value="sound">Sonidos</option></select></div>
+        </div>
+        <div class="field" id="responseTimeField"><label for="responseSeconds">Tiempo para responder</label>
 <select id="responseSeconds">
 <option value="3">3 segundos</option>
 <option value="4" selected>4 segundos</option>
 <option value="5">5 segundos</option>
 <option value="6">6 segundos</option>
 </select></div>
-<div class="field" id="speedField"><label>Velocidad del conteo</label><select id="countSpeed">
+<div class="field" id="speedField"><label for="countSpeed">Velocidad del conteo</label><select id="countSpeed">
 <option value="slow">Lenta</option><option value="normal" selected>Normal</option><option value="fast">Rápida</option>
 </select></div>
 <label class="check" id="retryField"><input id="retry" type="checkbox"> <span id="retryText">Reevaluar letras incorrectas al final</span></label>
-    <button class="primary" id="start">Comenzar evaluación</button>
+        <div class="start-box">
+          <div class="start-summary"><span class="muted-label">Estudiante</span><strong id="startSummary">—</strong></div>
+          <button class="primary btn-lg" id="start"><svg class="ic"><use href="#i-play"/></svg>Comenzar evaluación</button>
+        </div>
+      </div>
+      <div class="panel eval-students">
+        <div class="panel-title"><span class="step">2</span>¿A quién vas a evaluar?</div>
+        <div class="monthhead">
+          <div><div class="monthtitle" id="monthTitle">Octubre 2026</div><div class="count" id="monthCount">0 de 5 estudiantes evaluados</div></div>
+          <div class="legend"><span class="lg lg-pending">Pendiente</span><span class="lg lg-done">Evaluado</span></div>
+        </div>
+        <div id="studentGrid" class="studentgrid"></div>
+        <div class="tip"><svg class="ic"><use href="#i-touch"/></svg><span>Para ver o eliminar una evaluación ya guardada, <b>mantén presionado</b> el nombre del estudiante (clic derecho en computadora).</span></div>
+      </div>
+    </div>
   </section>
 
-  <section id="reports" class="card" style="display:none">
-<div class="no-print" style="display:flex;justify-content:flex-end;margin:0 0 10px">
+  <section id="reports" class="card page" style="display:none">
+<div class="no-print legacy-back" style="display:flex;justify-content:flex-end;margin:0 0 10px">
   <button type="button" id="backToEvaluationTop" class="secondary">← Volver a la Evaluación</button>
 </div>
-
-    <h1>Reportes</h1>
-    <div class="sub report-month-alert"><span id="reportMonthTitle">Octubre 2026</span> · Resultados guardados en Supabase</div>
-<div class="no-print" style="display:flex;justify-content:flex-end;margin:4px 0 14px">
-  <button type="button" id="printReportBtn" class="btn">🖨️ Imprimir reporte</button>
-</div>
-    <div class="row" style="margin-bottom:18px">
-      <div class="field"><label>Tipo de reporte</label><select id="reportMode"><option value="area">Por área</option><option value="general">General del estudiante</option><option value="progress">Progreso mensual</option></select></div>
-      <div class="field" id="reportAreaField"><label>Área</label><select id="reportArea"><optgroup label="Literatura y lenguaje"><option value="letters">Letras</option><option value="syllables">Sílabas</option><option value="rhymes">Rimas</option><option value="alliteration">Aliteración</option><option value="sentences">Repetición de frases</option></optgroup><optgroup label="Matemáticas"><option value="numbers">Números</option><option value="counting">Conteo</option><option value="shapes">Figuras</option><option value="colors">Colores</option><option value="patterns">Patrones</option></optgroup></select></div>
-      <div class="field" id="reportLanguageField"><label>Idioma</label><select id="reportLanguage"><option value="es">Español</option><option value="en">English</option></select></div>
-      <div class="field" id="reportCaseField"><label>Tipo</label><select id="reportCase"><option value="upper">Mayúsculas</option><option value="lower">Minúsculas</option><option value="sound">Sonidos</option></select></div>
-      <div class="field"><label>Estudiante</label><select id="reportStudent"><option value="all">Todos los estudiantes</option></select></div>
-      <div class="field" id="reportSortField"><label>Ordenar por</label><select id="reportSort"><option value="asc">Menor a mayor</option><option value="desc">Mayor a menor</option><option value="alpha">Alfabético</option></select></div>
+    <div class="page-head">
+      <div>
+        <div class="eyebrow">Reportes</div>
+        <h1>Reportes</h1>
+        <div class="sub report-month-alert"><span id="reportMonthTitle">Octubre 2026</span> · Resultados guardados en Supabase</div>
+      </div>
+      <div class="no-print page-actions">
+        <button type="button" id="printReportBtn" class="btn secondary"><svg class="ic"><use href="#i-print"/></svg>Imprimir reporte</button>
+      </div>
+    </div>
+    <div class="panel filters-panel no-print">
+      <div class="panel-title small">Filtros</div>
+    <div class="row">
+      <div class="field"><label for="reportMode">Tipo de reporte</label><select id="reportMode"><option value="area">Por área</option><option value="general">General del estudiante</option><option value="progress">Progreso mensual</option></select></div>
+      <div class="field" id="reportAreaField"><label for="reportArea">Área</label><select id="reportArea"><optgroup label="Literatura y lenguaje"><option value="letters">Letras</option><option value="syllables">Sílabas</option><option value="rhymes">Rimas</option><option value="alliteration">Aliteración</option><option value="sentences">Repetición de frases</option></optgroup><optgroup label="Matemáticas"><option value="numbers">Números</option><option value="counting">Conteo</option><option value="shapes">Figuras</option><option value="colors">Colores</option><option value="patterns">Patrones</option></optgroup></select></div>
+      <div class="field" id="reportLanguageField"><label for="reportLanguage">Idioma</label><select id="reportLanguage"><option value="es">Español</option><option value="en">English</option></select></div>
+      <div class="field" id="reportCaseField"><label for="reportCase">Tipo</label><select id="reportCase"><option value="upper">Mayúsculas</option><option value="lower">Minúsculas</option><option value="sound">Sonidos</option></select></div>
+      <div class="field"><label for="reportStudent">Estudiante</label><select id="reportStudent"><option value="all">Todos los estudiantes</option></select></div>
+      <div class="field" id="reportSortField"><label for="reportSort">Ordenar por</label><select id="reportSort"><option value="asc">Menor a mayor</option><option value="desc">Mayor a menor</option><option value="alpha">Alfabético</option></select></div>
+    </div>
+      <div class="filters-tip">Elige un estudiante en «Estudiante» y toca su fila para ver su detalle y su progreso mensual.</div>
     </div>
     <div id="monthlyProgressReport" class="monthly-progress-report" style="display:none"></div>
     <div id="generalStudentReport" class="general-student-report" style="display:none"></div>
-    <div id="reportList"></div>
-    <div class="classanalysis">
+    <div class="panel results-panel"><div class="panel-title small no-print">Resultados</div><div id="reportList"></div></div>
+    <div class="classanalysis panel">
       <h2 style="margin:0 0 4px">Análisis de la clase</h2>
       <div class="analysisnote" id="analysisNote">Letras ordenadas por cantidad de estudiantes que necesitan refuerzo.</div>
       <div id="classNeeds"></div>
     </div>
-    <div id="studentDetail" class="detail">
+    <div id="studentDetail" class="detail panel">
       <div class="detailhead">
         <div><h2 id="detailName" style="margin:0"></h2><div id="detailType" class="sub" style="margin:4px 0 0"></div></div>
         <div id="detailPercent" class="bigpercent"></div>
@@ -772,15 +1158,17 @@ button{border:0;border-radius:13px;padding:13px 18px;font-size:16px;font-weight:
         <div id="monthlyBars" class="monthbars"></div>
       </div>
     </div>
-    <button class="secondary" id="backSetup" type="button" style="margin-top:18px">← Volver a evaluación</button>
+    <button class="secondary legacy-back" id="backSetup" type="button" style="margin-top:18px">← Volver a evaluación</button>
   </section>
 
-  
-<section id="settingsView" class="card" style="display:none">
-  <h1>⚙️ Configuración</h1>
+<section id="settingsView" class="card page" style="display:none">
+  <div class="page-head"><div>
+  <div class="eyebrow">Configuración</div>
+  <h1>Configuración</h1>
   <p class="sub">Opciones administrativas de Little Learners.</p>
+  </div></div>
 
-  <div class="settings-section">
+  <div class="settings-section panel">
     <h2>Administración de datos</h2>
     <p>Estas opciones no son necesarias para el uso diario del sistema.</p>
     <details class="danger-details">
@@ -793,24 +1181,32 @@ button{border:0;border-radius:13px;padding:13px 18px;font-size:16px;font-weight:
       </div>
     </details>
   </div>
+  <div class="settings-section panel about-panel">
+    <h2>Acerca de</h2>
+    <p>Little Learners · Early Learning Assessment System · <b>V6.0.0</b><br>Developed by Geovanny Cobos</p>
+  </div>
 
-  <button class="secondary" id="backSettingsBtn" type="button" style="margin-top:20px">← Volver a evaluación</button>
+  <button class="secondary legacy-back" id="backSettingsBtn" type="button" style="margin-top:20px">← Volver a evaluación</button>
 </section>
 
-<section id="classView" class="card" style="display:none">
-  <div style="display:flex;justify-content:flex-end;margin:0 0 10px">
+<section id="classView" class="card page" style="display:none">
+  <div class="legacy-back" style="display:flex;justify-content:flex-end;margin:0 0 10px">
     <button class="secondary" id="backClassTopBtn" type="button">← Volver a evaluación</button>
   </div>
+  <div class="page-head"><div>
+  <div class="eyebrow">Mi clase</div>
   <h1>Mi clase</h1>
   <p class="sub">Administra los estudiantes de tu clase.</p>
-  <div class="row" style="margin-bottom:20px;align-items:flex-end">
+  </div></div>
+  <div class="panel add-panel">
+  <div class="panel-title small">Agregar estudiante</div>
+  <div class="row" style="align-items:flex-end">
     <div class="field" style="flex:1;min-width:220px;margin:0">
-      <label>Nombre del estudiante</label>
-      <input id="newStudentName" placeholder="Nombre del estudiante" maxlength="40"
-        style="width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid #cbd5e1;border-radius:12px;font-size:17px">
+      <label for="newStudentName">Nombre del estudiante</label>
+      <input id="newStudentName" type="text" placeholder="Nombre del estudiante" maxlength="40">
     </div>
     <div class="field" style="min-width:185px;margin:0">
-      <label>Disponible desde</label>
+      <label for="studentAvailableFrom">Disponible desde</label>
       <select id="studentAvailableFrom">
         <option value="2026-08" selected>Agosto 2026</option>
         <option value="2026-09">Septiembre 2026</option>
@@ -824,12 +1220,13 @@ button{border:0;border-radius:13px;padding:13px 18px;font-size:16px;font-weight:
         <option value="2027-05">Mayo 2027</option>
       </select>
     </div>
-    <button class="primary" id="addStudentBtn" type="button">+ Agregar</button>
+    <button class="primary" id="addStudentBtn" type="button"><svg class="ic"><use href="#i-plus"/></svg>Agregar</button>
   </div>
-  <div class="sub" style="margin-top:-10px;margin-bottom:18px">Los estudiantes de una clase nueva normalmente están disponibles desde agosto. Si un estudiante llega después, selecciona su mes de ingreso.</div>
-  <div id="classRoster"></div>
+  <div class="sub hint-text">Los estudiantes de una clase nueva normalmente están disponibles desde agosto. Si un estudiante llega después, selecciona su mes de ingreso.</div>
+  </div>
+  <div class="panel roster-panel"><div class="panel-title small">Estudiantes</div><div id="classRoster"></div></div>
 
-  <button class="secondary" id="backClassBtn" type="button" style="margin-top:20px">← Volver a evaluación</button>
+  <button class="secondary legacy-back" id="backClassBtn" type="button" style="margin-top:20px">← Volver a evaluación</button>
 </section>
 <section id="test" class="card">
     <div id="testcontent">
@@ -872,16 +1269,22 @@ button{border:0;border-radius:13px;padding:13px 18px;font-size:16px;font-weight:
   </section>
 
   <section id="result" class="card">
-    <h1>Evaluación terminada</h1>
-    <div id="resultWho" class="sub"></div>
+    <div class="result-head">
+      <div class="result-badge" aria-hidden="true">🎉</div>
+      <div><h1>Evaluación terminada</h1><div id="resultWho" class="sub"></div></div>
+    </div>
     <div id="score" class="score"></div>
-    <div><strong>Correctas</strong><div id="correctList" class="pills"></div></div>
-    <div><strong>Por trabajar</strong><div id="wrongList" class="pills"></div></div>
-    <div class="row" style="margin-top:22px">
+    <div class="result-cols">
+      <div class="result-col ok-col"><strong>Correctas</strong><div id="correctList" class="pills"></div></div>
+      <div class="result-col bad-col"><strong>Por trabajar</strong><div id="wrongList" class="pills"></div></div>
+    </div>
+    <div class="row result-actions">
       <button class="primary" id="again">Volver a estudiantes</button>
       <button class="secondary" id="repeat">Evaluar nuevamente</button>
     </div>
   </section>
+  <footer class="app-foot no-print">Little Learners · V6.0.0 · Developed by Geovanny Cobos</footer>
+  </main>
 </div>
 
 <div id="resetDataModal" class="reset-data-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="resetDataTitle">
@@ -938,6 +1341,7 @@ button{border:0;border-radius:13px;padding:13px 18px;font-size:16px;font-weight:
     <div id="studentResultsContent" aria-live="polite">Cargando…</div>
   </div>
 </div>
+
 <script>
 const LETTERS_ES=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','Ñ','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 const LETTERS_EN=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
@@ -2933,11 +3337,62 @@ $('backClassBtn').addEventListener('click', () => {
 });
 
 </script>
-<!-- V5.9.36: etiqueta de versión al pie de página. Sin otros cambios respecto de V5.9.35. -->
-<div id="appVersion" style="text-align:center;font-size:12px;color:#8a94a6;padding:14px 0 18px;user-select:none;pointer-events:none">Little Learners · V5.9.36</div>
+<script>
+/* V6.0.0 — Navegación de la barra superior.
+   No reemplaza la lógica existente: reutiliza openReports(), openClassView(),
+   openSettingsView(), closeReports(), closeSettingsView() y los botones
+   originales («Volver», «again») para que cada sección se cargue igual que antes. */
+(function(){
+  const SECTIONS=['setup','reports','classView','settingsView','test','result'];
+  const NAV={setup:'navEvaluate',reports:'reportsBtn',classView:'classBtn',settingsView:'settingsBtn',result:'navEvaluate'};
+  const el=id=>document.getElementById(id);
+  const isShown=id=>{const e=el(id);return !!e&&getComputedStyle(e).display!=='none'};
+  const current=()=>SECTIONS.find(isShown)||'setup';
 
+  // Antes de que los botones originales abran su sección, cerramos la sección
+  // actual (las funciones originales solo cerraban la pantalla de Evaluar).
+  el('appNav').addEventListener('click',e=>{
+    const btn=e.target.closest('button');
+    if(!btn||btn.id==='navEvaluate')return;
+    const cur=current();
+    if(cur==='test'){e.stopImmediatePropagation();e.preventDefault();return}
+    if(cur==='classView'||cur==='settingsView'){try{refreshActiveStudents()}catch(err){console.error(err)}}
+    ['reports','classView','settingsView','result'].forEach(id=>{if(el(id))el(id).style.display='none'});
+  },true);
 
+  el('navEvaluate').addEventListener('click',()=>{
+    const cur=current();
+    if(cur==='reports')closeReports();
+    else if(cur==='settingsView')closeSettingsView();
+    else if(cur==='classView')el('backClassBtn').click();
+    else if(cur==='result')el('again').click();
+  });
 
+  // Estado visual: pestaña activa, modo evaluación (sin barra) y resumen del estudiante elegido.
+  function syncShell(){
+    const cur=current();
+    const active=NAV[cur];
+    document.querySelectorAll('#appNav .navtab').forEach(b=>{if(b.id===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+    document.body.classList.toggle('in-test',cur==='test');
+  }
+  function syncStartSummary(){
+    const sel=document.querySelector('#studentGrid .studentbtn.selected');
+    const s=el('startSummary');
+    if(s)s.textContent=sel?sel.childNodes[0].textContent.trim():'Elige un estudiante';
+  }
+  const mo=new MutationObserver(syncShell);
+  SECTIONS.forEach(id=>{if(el(id))mo.observe(el(id),{attributes:true,attributeFilter:['style']})});
+  new MutationObserver(syncStartSummary).observe(el('studentGrid'),{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  syncShell();syncStartSummary();
 
+  // Cerrar sesión (nuevo): borra solo la sesión de esta pestaña; no toca datos.
+  el('logoutBtn').addEventListener('click',()=>{
+    if(!confirm('¿Cerrar sesión en este dispositivo?'))return;
+    try{sessionStorage.removeItem('webPreKSession')}catch(err){}
+    location.reload();
+  });
+})();
+
+</script>
 </body>
 </html>

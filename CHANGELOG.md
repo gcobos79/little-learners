@@ -1,6 +1,6 @@
 # Changelog
 
-## V6.0.0 — 2026-10-29 · in `beta/` (testing)
+## V6.0.0 — 2026-10-29 · `index.html` (main site)
 Visual redesign and reorganization. **The original JavaScript (assessments, saving, reports, Supabase) is unchanged, byte for byte.**
 
 ### Layout
@@ -21,9 +21,9 @@ Visual redesign and reorganization. **The original JavaScript (assessments, savi
 
 ### Testing
 - Same automated walkthrough on V5.9.35 and V6.0.0, desktop and tablet, using simulated Supabase: **104/104 identical results**, no errors.
-- Pending: test with the real account.
+- Published directly to the main site at the owner's request. V5.9.36 is still available in `versions/` for rollback.
 
-## V5.9.36 — 2026-10-29 · `index.html` (main site)
+## V5.9.36 — 2026-10-29 · previous main site
 - Adds a "Little Learners · V5.9.36" label at the bottom of the page. Nothing else changed.
 
 ## V5.9.35 — stable reference
